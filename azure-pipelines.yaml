@@ -20,26 +20,26 @@ resources:
       type: github
       name: hmcts/cpp-azure-devops-templates
       endpoint: 'hmcts'
-      ref: 'main'
+      ref: 'DTSPO-25317'
  
     - repository: buildSettings
       type: github
-      name: hmcts/cp-build-setting
+      name: hmcts/cp-build-settings
       endpoint: 'hmcts'
       ref: 'main'
  
 pool:
   name: 'MDV-ADO-AGENT-AKS-01'
   demands:
-    - identifier -equals centos8-j17-postgres
+    - identifier -equals centos8-j17-postgres-upd
  
 variables:
   - name: sonarqubeProject
-    value: "" #update the sonarqube project for the respective repos
-  - group: "cjs-common-platform" #this is common for all the repos
- 
+    value: "uk.gov.justice:cake-shop"
+  - group: "cjs-common-platform"
+
 stages:
   - template: pipelines/cp-framework-build.yaml@cppAzureDevOpsTemplates
     parameters:
       sonarqube_project: ${{ variables['sonarqubeProject'] }}
-      coveralls_repo_token: $() # this will be the repo name in lower case, Please refer this step "Update repo token in ADO library" in confluence to update in Azure devops, e.g., $(cjscp-event-store)
+      coveralls_repo_token: $(cp-cake-shop)

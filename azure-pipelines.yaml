@@ -20,7 +20,7 @@ resources:
       type: github
       name: hmcts/cpp-azure-devops-templates
       endpoint: 'hmcts'
-      ref: 'DTSPO-25317'
+      ref: 'main'
  
     - repository: buildSettings
       type: github

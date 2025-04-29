@@ -43,10 +43,6 @@
             <artifactId>rest-client-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>uk.gov.justice.utils</groupId>
-            <artifactId>utilities-file</artifactId>
-        </dependency>
-        <dependency>
             <groupId>uk.gov.justice.services</groupId>
             <artifactId>file-service-persistence</artifactId>
         </dependency>

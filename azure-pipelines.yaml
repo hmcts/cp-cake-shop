@@ -31,7 +31,7 @@ resources:
 pool:
   name: 'MDV-ADO-AGENT-AKS-01'
   demands:
-    - identifier -equals centos8-j17-postgres-upd
+    - identifier -equals centos8-j17-postgres
  
 variables:
   - name: sonarqubeProject

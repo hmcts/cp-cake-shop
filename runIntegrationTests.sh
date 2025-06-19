@@ -43,10 +43,10 @@ buildAndDeploy() {
   #Unlike other contexts, this script doesn't provide capability to run integration tests, main intention of this script is to just deploy cakeshop to local dev environment so that ITs can be executed froM Intellij/IDE for debugging purpose.
   #mvn clean install runs ITs with a different approach by using embedded wildfly (this approach is required for travis pipeline)
   loginToDockerContainerRegistry
-  buildWarsForCakeShopContext #This is not going to run tests, i.e. builds using -DskipTests
+  #buildWarsForCakeShopContext #This is not going to run tests, i.e. builds using -DskipTests
   undeployWarsFromDocker
-  buildAndStartContainers
-  runLiquibase
+  #buildAndStartContainers
+  #runLiquibase
   deployWiremock
   deployWarsForCakeShopContext
   contextHealthchecksForCakeShop

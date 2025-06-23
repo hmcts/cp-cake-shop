@@ -7,7 +7,7 @@
     <parent>
         <groupId>uk.gov.justice</groupId>
         <artifactId>maven-framework-parent-pom</artifactId>
-        <version>17.1.0</version>
+        <version>17.101.0</version>
     </parent>
 
     <groupId>uk.gov.justice.services</groupId>
@@ -44,9 +44,9 @@
         <wildfly.version>26.1.2.Final</wildfly.version>
         <wildfly.maven.plugin.version>4.1.1.Final</wildfly.maven.plugin.version>
 
-        <framework-libraries.version>17.103.0-M2</framework-libraries.version>
-        <framework.version>17.103.0-M3</framework.version>
-        <event-store.version>17.103.0-M14</event-store.version>
+        <framework-libraries.version>17.103.0-M5</framework-libraries.version>
+        <framework.version>17.103.0-M12</framework.version>
+        <event-store.version>17.103.0-M15</event-store.version>
         <file-service.version>17.103.0</file-service.version>
     </properties>
 

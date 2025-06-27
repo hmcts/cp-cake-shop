@@ -6,10 +6,10 @@
 #context name is used to derive database name for running liquibase scripts and cake-shop uses framework database instead of it's own database
 CONTEXT_NAME=framework
 
-FRAMEWORK_LIBRARIES_VERSION=17.102.1
-FRAMEWORK_VERSION=17.102.1
+FRAMEWORK_LIBRARIES_VERSION=17.103.0-M5
+FRAMEWORK_VERSION=17.103.0-M15
+EVENT_STORE_VERSION=17.103.0-M20
 FILE_SERVICE_VERSION=17.103.0
-EVENT_STORE_VERSION=17.102.2
 
 DOCKER_CONTAINER_REGISTRY_HOST_NAME=crmdvrepo01
 
@@ -41,7 +41,6 @@ runLiquibase() {
 
 buildAndDeploy() {
   #Unlike other contexts, this script doesn't provide capability to run integration tests, main intention of this script is to just deploy cakeshop to local dev environment so that ITs can be executed froM Intellij/IDE for debugging purpose.
-  #mvn clean install runs ITs with a different approach by using embedded wildfly (this approach is required for travis pipeline)
   loginToDockerContainerRegistry
   buildWarsForCakeShopContext #This is not going to run tests, i.e. builds using -DskipTests
   undeployWarsFromDocker

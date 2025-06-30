@@ -63,7 +63,7 @@ public class StreamErrorHandlingIT {
     public void shouldAddRowInStreamErrorTableOnEventProcessingFailure() throws Exception {
         final String eventName = "cakeshop.events.recipe-added";
 
-        final Optional<StreamError> streamErrorOptional = testDataManager.createAnEventWithViewStoreFailure(eventName);
+        final Optional<StreamError> streamErrorOptional = testDataManager.createAnEventWithEventListenerFailure(eventName);
 
         if (streamErrorOptional.isPresent()) {
             final StreamError streamError = streamErrorOptional.get();

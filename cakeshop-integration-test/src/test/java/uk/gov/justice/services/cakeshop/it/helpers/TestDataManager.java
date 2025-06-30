@@ -37,11 +37,11 @@ public class TestDataManager {
         this.poller = new Poller(20, 1000L);
     }
 
-    public Optional<StreamError> createAnEventWithViewStoreFailure() {
-        return createAnEventWithViewStoreFailure("cakeshop.events.recipe-added");
+    public Optional<StreamError> createAnEventWithEventListenerFailure() {
+        return createAnEventWithEventListenerFailure("cakeshop.events.recipe-added");
     }
 
-    public Optional<StreamError> createAnEventWithViewStoreFailure(String eventName) {
+    public Optional<StreamError> createAnEventWithEventListenerFailure(String eventName) {
         final Client client = new RestEasyClientFactory().createResteasyClient();
         final String recipeId = "6a710473-2af4-44a9-99f1-4c27632d5b23";
         final String recipeName = "DELIBERATELY_FAIL";

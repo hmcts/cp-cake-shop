@@ -17,8 +17,10 @@ import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamEr
 import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import static com.jayway.jsonpath.JsonPath.read;
+import static java.util.UUID.randomUUID;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.LENIENT;
@@ -26,6 +28,9 @@ import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QU
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BY_ERROR_HASH_URI_TEMPLATE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BY_HAS_ERROR;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BY_STREAM_ID_URI_TEMPLATE;
+import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BASE_URI;
+import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BY_ERROR_ID_URI_TEMPLATE;
+import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BY_STREAM_ID_URI_TEMPLATE;
 
 public class RestResourcesIT {
 
@@ -64,7 +69,7 @@ public class RestResourcesIT {
 
         @SuppressWarnings("OptionalGetWithoutIsPresent")
         @Test
-        public void getAllStreamsByCriteria() {
+        public void getStreamsByCriteria() {
             final Optional<StreamError> streamError = testDataManager.createAnEventWithEventListenerFailure();
             final String errorHash = streamError.get().streamErrorHash().hash();
             final UUID errorId = streamError.get().streamErrorDetails().id();
@@ -82,7 +87,7 @@ public class RestResourcesIT {
                             "errorPosition": 1
                         }
                     ]
-                    """.formatted(streamId, errorId, streamId);
+                    """.formatted(streamId, errorId);
 
             final String expectedResponseByStreamId = """
                     [
@@ -109,15 +114,15 @@ public class RestResourcesIT {
                     ]
                     """.formatted(streamId, errorId, streamId);
 
-            final Invocation.Builder getStreamsByErrorHashRequest = client.target(STREAMS_QUERY_BY_ERROR_HASH_URI_TEMPLATE.formatted(errorHash)).request();
-            try (final Response response = getStreamsByErrorHashRequest.get()) {
+            final Invocation.Builder byErrorHashRequest = client.target(STREAMS_QUERY_BY_ERROR_HASH_URI_TEMPLATE.formatted(errorHash)).request();
+            try (final Response response = byErrorHashRequest.get()) {
                 assertThat(response.getStatus(), is(200));
                 var actualResponse = response.readEntity(String.class);
                 assertEquals(expectedResponseWithErrorStreams, actualResponse, LENIENT);
             }
 
-            final Invocation.Builder getStreamsByStreamIdRequest = client.target(STREAMS_QUERY_BY_STREAM_ID_URI_TEMPLATE.formatted(streamId)).request();
-            try (final Response response = getStreamsByStreamIdRequest.get()) {
+            final Invocation.Builder byStreamIdRequest = client.target(STREAMS_QUERY_BY_STREAM_ID_URI_TEMPLATE.formatted(streamId)).request();
+            try (final Response response = byStreamIdRequest.get()) {
                 assertThat(response.getStatus(), is(200));
                 var actualResponse = response.readEntity(String.class);
                 assertEquals(expectedResponseByStreamId, actualResponse, LENIENT);
@@ -147,6 +152,82 @@ public class RestResourcesIT {
                 var actualResponse = response.readEntity(String.class);
                 String errorMessage = read(actualResponse, "$.errorMessage");
                 assertThat(errorMessage, containsString("Accepted values for errorHash: true"));
+            }
+        }
+    }
+
+    @Nested
+    class StreamErrorsResourceIT {
+
+        @SuppressWarnings("OptionalGetWithoutIsPresent")
+        @Test
+        public void getStreamErrorsByCriteria() {
+            final Optional<StreamError> streamError = testDataManager.createAnEventWithEventListenerFailure();
+            final String errorHash = streamError.get().streamErrorHash().hash();
+            final UUID errorId = streamError.get().streamErrorDetails().id();
+            final UUID streamId = streamError.get().streamErrorDetails().streamId();
+            final String expectedResponse = """
+                    [
+                         {
+                             "streamErrorDetails": {
+                                 "id": "%s",
+                                 "hash": "%s",
+                                 "exceptionMessage": "org.hibernate.exception.ConstraintViolationException: could not execute statement",
+                                 "eventName": "cakeshop.events.recipe-added",
+                                 "streamId": "%s",
+                                 "positionInStream": 1,
+                                 "componentName": "EVENT_LISTENER",
+                                 "source": "cakeshop"
+                             },
+                             "streamErrorHash": {
+                                 "hash": "%s",
+                                 "exceptionClassName": "javax.persistence.PersistenceException",
+                                 "causeClassName": "org.postgresql.util.PSQLException",
+                                 "javaClassName": "uk.gov.justice.services.persistence.EntityManagerFlushInterceptor",
+                                 "javaMethod": "process",
+                                 "javaLineNumber": 20
+                             }
+                         }
+                     ]
+                    """.formatted(errorId, errorHash, streamId, errorHash);
+
+            final Invocation.Builder byStreamIdRequest = client.target(STREAM_ERRORS_QUERY_BY_STREAM_ID_URI_TEMPLATE.formatted(streamId)).request();
+            try (final Response response = byStreamIdRequest.get()) {
+                assertThat(response.getStatus(), is(200));
+                var actualResponse = response.readEntity(String.class);
+                assertEquals(expectedResponse, actualResponse, LENIENT);
+                assertThat(read(actualResponse, "$[0].streamErrorDetails.causeMessage"), containsString("violates not-null constraint"));
+                assertThat(read(actualResponse, "$[0].streamErrorDetails.eventId"), notNullValue());
+                assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));
+            }
+
+            final Invocation.Builder byErrorHashRequest = client.target(STREAM_ERRORS_QUERY_BY_ERROR_ID_URI_TEMPLATE.formatted(errorId)).request();
+            try (final Response response = byErrorHashRequest.get()) {
+                assertThat(response.getStatus(), is(200));
+                var actualResponse = response.readEntity(String.class);
+                assertEquals(expectedResponse, actualResponse, LENIENT);
+                assertThat(read(actualResponse, "$[0].streamErrorDetails.causeMessage"), containsString("violates not-null constraint"));
+                assertThat(read(actualResponse, "$[0].streamErrorDetails.eventId"), notNullValue());
+                assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));
+            }
+        }
+
+        @Test
+        public void shouldReturnBadRequestGivenInvalidInputs() {
+            final Invocation.Builder requestWithNoQueryParams = client.target(STREAM_ERRORS_QUERY_BASE_URI).request();
+            try (final Response response = requestWithNoQueryParams.get()) {
+                assertThat(response.getStatus(), is(400));
+                var actualResponse = response.readEntity(String.class);
+                String errorMessage = read(actualResponse, "$.errorMessage");
+                assertThat(errorMessage, containsString("Please set either 'streamId' or 'errorId' as request parameters"));
+            }
+
+            final Invocation.Builder requestWithBothQueryParams = client.target(STREAM_ERRORS_QUERY_BASE_URI + "?streamId=%s&errorId=%s".formatted(randomUUID(), randomUUID())).request();
+            try (final Response response = requestWithBothQueryParams.get()) {
+                assertThat(response.getStatus(), is(400));
+                var actualResponse = response.readEntity(String.class);
+                String errorMessage = read(actualResponse, "$.errorMessage");
+                assertThat(errorMessage, containsString("Please set either 'streamId' or 'errorId' as request parameters, not both"));
             }
         }
     }

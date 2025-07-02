@@ -17,5 +17,10 @@ public class CakeShopUris {
     public static final String STREAMS_QUERY_BY_ERROR_HASH_URI_TEMPLATE = STREAMS_QUERY_BASE_URI + "?errorHash=%s";
     public static final String STREAMS_QUERY_BY_STREAM_ID_URI_TEMPLATE = STREAMS_QUERY_BASE_URI + "?streamId=%s";
     public static final String STREAMS_QUERY_BY_HAS_ERROR = STREAMS_QUERY_BASE_URI + "?hasError=true";
+
+    public static final String STREAM_ERRORS_QUERY_BASE_URI = HOST + "/cakeshop-service/internal/stream-errors";
+
+    public static final String STREAM_ERRORS_QUERY_BY_STREAM_ID_URI_TEMPLATE = STREAM_ERRORS_QUERY_BASE_URI + "?streamId=%s";
+    public static final String STREAM_ERRORS_QUERY_BY_ERROR_ID_URI_TEMPLATE = STREAM_ERRORS_QUERY_BASE_URI + "?errorId=%s";
     public static final String CAKES_RESOURCE_URI_FORMAT = RECIPES_RESOURCE_URI + "%s/cakes/%s";
 }

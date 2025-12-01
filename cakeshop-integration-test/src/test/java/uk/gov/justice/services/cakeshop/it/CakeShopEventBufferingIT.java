@@ -17,6 +17,7 @@ import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
 import uk.gov.justice.services.cakeshop.it.helpers.StandaloneStreamStatusJdbcRepositoryFactory;
 import uk.gov.justice.services.event.buffer.core.repository.subscription.StreamStatusJdbcRepository;
 import uk.gov.justice.services.event.buffer.core.repository.subscription.Subscription;
+import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import java.util.Optional;
 
@@ -36,12 +37,26 @@ public class CakeShopEventBufferingIT {
     private final StreamStatusJdbcRepository streamStatusJdbcRepository = standaloneStreamStatusJdbcRepositoryFactory.getStreamStatusJdbcRepository(viewStoreDatasource);
 
     private final CommandFactory commandFactory = new CommandFactory();
+    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
 
     private Client client;
 
     @BeforeEach
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
+
+        databaseCleaner.cleanEventStoreTables("framework");
+        databaseCleaner.cleanViewStoreTables(
+                "framework",
+                "stream_buffer",
+                "stream_status",
+                "stream_error_hash",
+                "stream_error",
+                "cake",
+                "cake_order",
+                "recipe",
+                "ingredient",
+                "processed_event");
     }
 
     @AfterEach

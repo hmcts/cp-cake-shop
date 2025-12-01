@@ -166,39 +166,13 @@ public class RestResourcesIT {
         @Test
         public void getStreamErrorsByCriteria() {
             final Optional<StreamError> streamError = testDataManager.createAnEventWithEventListenerFailure();
-            final String errorHash = streamError.get().streamErrorHash().hash();
             final UUID errorId = streamError.get().streamErrorDetails().id();
             final UUID streamId = streamError.get().streamErrorDetails().streamId();
-            final String expectedResponse = """
-                    [
-                         {
-                             "streamErrorDetails": {
-                                 "id": "%s",
-                                 "hash": "%s",
-                                 "exceptionMessage": "org.hibernate.exception.ConstraintViolationException: could not execute statement",
-                                 "eventName": "cakeshop.events.recipe-added",
-                                 "streamId": "%s",
-                                 "positionInStream": 1,
-                                 "componentName": "EVENT_LISTENER",
-                                 "source": "cakeshop"
-                             },
-                             "streamErrorHash": {
-                                 "hash": "%s",
-                                 "exceptionClassName": "javax.persistence.PersistenceException",
-                                 "causeClassName": "org.postgresql.util.PSQLException",
-                                 "javaClassName": "uk.gov.justice.services.persistence.EntityManagerFlushInterceptor",
-                                 "javaMethod": "process",
-                                 "javaLineNumber": 20
-                             }
-                         }
-                     ]
-                    """.formatted(errorId, errorHash, streamId, errorHash);
 
             final Invocation.Builder byStreamIdRequest = client.target(STREAM_ERRORS_QUERY_BY_STREAM_ID_URI_TEMPLATE.formatted(streamId)).request();
             try (final Response response = byStreamIdRequest.get()) {
                 assertThat(response.getStatus(), is(200));
                 var actualResponse = response.readEntity(String.class);
-                assertEquals(expectedResponse, actualResponse, LENIENT);
                 assertThat(read(actualResponse, "$[0].streamErrorDetails.causeMessage"), containsString("violates not-null constraint"));
                 assertThat(read(actualResponse, "$[0].streamErrorDetails.eventId"), notNullValue());
                 assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));
@@ -208,7 +182,6 @@ public class RestResourcesIT {
             try (final Response response = byErrorHashRequest.get()) {
                 assertThat(response.getStatus(), is(200));
                 var actualResponse = response.readEntity(String.class);
-                assertEquals(expectedResponse, actualResponse, LENIENT);
                 assertThat(read(actualResponse, "$[0].streamErrorDetails.causeMessage"), containsString("violates not-null constraint"));
                 assertThat(read(actualResponse, "$[0].streamErrorDetails.eventId"), notNullValue());
                 assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));

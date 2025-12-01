@@ -46,7 +46,7 @@
 
         <framework-libraries.version>17.103.0</framework-libraries.version>
         <framework.version>17.103.0</framework.version>
-        <event-store.version>17.103.1-M4</event-store.version>
+        <event-store.version>17.103.5</event-store.version>
         <file-service.version>17.103.0</file-service.version>
     </properties>
 

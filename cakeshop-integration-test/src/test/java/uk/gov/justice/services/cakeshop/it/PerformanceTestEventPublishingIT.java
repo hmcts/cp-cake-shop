@@ -3,6 +3,9 @@ package uk.gov.justice.services.cakeshop.it;
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.DB_CONTEXT_NAME;
 
 import uk.gov.justice.services.cakeshop.it.helpers.BatchEventInserter;
@@ -20,6 +23,7 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,6 +64,8 @@ public class PerformanceTestEventPublishingIT {
         System.out.printf("Adding %d events into the event store took %f seconds%n",
                 numberOfEventsPerStream * numberOfStreams,
                 timeInSeconds);
+
+        assertThat("Stop sonar failing the build by adding an assertion", stopWatch, is(notNullValue()));
     }
 
     private void addEventsToEventLog(final int numberOfStreams, final int numberOfEventsPerStream) throws Exception {

@@ -17,8 +17,8 @@ public class BatchEventInserter {
 
     private static final String SQL_INSERT_EVENT =
             "INSERT INTO event_log " +
-            "(id, stream_id, position_in_stream, name, metadata, payload, date_created) " +
-            "VALUES(?, ?, ?, ?, ?, ?, ?)";
+            "(id, stream_id, position_in_stream, name, metadata, payload, date_created, event_number, previous_event_number) " +
+            "VALUES(?, ?, ?, ?, ?, ?, ?, NULL, NULL)";
 
     private static final String SQL_INSERT_STREAM = "INSERT INTO event_stream " +
                                                     "(stream_id, date_created, active) values (?, ?, ?)";

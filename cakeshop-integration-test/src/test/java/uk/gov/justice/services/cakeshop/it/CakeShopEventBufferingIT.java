@@ -37,7 +37,7 @@ public class CakeShopEventBufferingIT {
     private final StreamStatusJdbcRepository streamStatusJdbcRepository = standaloneStreamStatusJdbcRepositoryFactory.getStreamStatusJdbcRepository(viewStoreDatasource);
 
     private final CommandFactory commandFactory = new CommandFactory();
-    final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
+    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
 
     private Client client;
 

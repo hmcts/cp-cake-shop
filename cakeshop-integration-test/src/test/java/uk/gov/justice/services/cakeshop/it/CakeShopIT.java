@@ -34,6 +34,7 @@ import uk.gov.justice.services.common.converter.ObjectToJsonObjectConverter;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.Event;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventJdbcRepository;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventRepositoryFactory;
+import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import java.util.Optional;
 
@@ -59,6 +60,7 @@ public class CakeShopIT {
     private final EventFactory eventFactory = new EventFactory();
     private final EventFinder eventFinder = new EventFinder(eventJdbcRepository);
     private final CommandFactory commandFactory = new CommandFactory();
+    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
 
     private Client client;
     private Querier querier;
@@ -71,6 +73,19 @@ public class CakeShopIT {
         client = new RestEasyClientFactory().createResteasyClient();
         querier = new Querier(client);
         commandSender = new CommandSender(client, eventFactory);
+
+        databaseCleaner.cleanEventStoreTables("framework");
+        databaseCleaner.cleanViewStoreTables(
+                "framework",
+                "stream_buffer",
+                "stream_status",
+                "stream_error_hash",
+                "stream_error",
+                "cake",
+                "cake_order",
+                "recipe",
+                "ingredient",
+                "processed_event");
     }
 
     @AfterEach

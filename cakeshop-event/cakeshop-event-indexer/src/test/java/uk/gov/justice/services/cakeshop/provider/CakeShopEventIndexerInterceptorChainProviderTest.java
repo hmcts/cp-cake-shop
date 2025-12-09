@@ -1,12 +1,13 @@
 package uk.gov.justice.services.cakeshop.provider;
 
-import org.junit.jupiter.api.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import uk.gov.justice.services.core.interceptor.InterceptorChainEntry;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.jupiter.api.Test;
 
 public class CakeShopEventIndexerInterceptorChainProviderTest {
 

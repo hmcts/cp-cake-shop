@@ -1,9 +1,9 @@
 package uk.gov.justice.services.cakeshop.jobstore;
 
+import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 
 @SuppressWarnings("squid:S2384")
 public class CakeMadeJobData {

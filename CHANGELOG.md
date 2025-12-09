@@ -5,6 +5,11 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 ## [Unreleased]
 ### Changed
+- Integration tests now run against a standalone wildfly docker instance rather than using the maven-wildfly-plugin
+- Integration tests no longer run as part of the default build.
+- `runIntegrationTests.sh` script now deploys cake-shop into wildfly and runs the integration tests
+- Deltaspike database tests now use an in memory database rather than using postgres
+- Random ports for integration tests removed and now use the default wildfly ports
 - Addition of secret scanning and dependabot to the project
 - Update event-store for event-buffer refactor:
   - Run each event sent to the event listeners in its own transaction
@@ -29,6 +34,8 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 - No longer removing stream_errors before inserting a new error, as the insert is now idempotent
 ### Removed
 - Removed `JmxCommandParameters` and `CommandRunMode` from JMX SystemCommanderMBean call
+- Removed wildfly maven plugin and wildfly download, as integration tests now run separately using `runIntegrationTests.sh`
+- Removed run of integration tests from default maven test phase; `mvn test` now solely runs unit tests 
 
 ## [17.100.1] - 2024-11-12
 ### Added

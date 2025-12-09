@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 
 import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
 import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
@@ -41,9 +42,9 @@ public class StreamErrorHandlingIT {
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
 
-        databaseCleaner.cleanEventStoreTables("framework");
+        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(
-                "framework",
+                CONTEXT_NAME,
                 "stream_buffer",
                 "stream_status",
                 "stream_error_hash",
@@ -59,7 +60,6 @@ public class StreamErrorHandlingIT {
     public void cleanup() throws Exception {
         client.close();
     }
-
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test

@@ -1,8 +1,7 @@
 package uk.gov.justice.services.cakeshop.jobstore;
 
-import java.util.UUID;
-import javax.inject.Inject;
-import org.slf4j.Logger;
+import static uk.gov.justice.services.cakeshop.jobstore.CakeMadeNotificationTask.CAKE_MADE_NOTIFICATION_TASK;
+
 import uk.gov.justice.services.common.util.UtcClock;
 import uk.gov.justice.services.messaging.JsonEnvelope;
 import uk.gov.justice.services.messaging.jms.JmsSender;
@@ -13,7 +12,11 @@ import uk.gov.moj.cpp.jobstore.api.task.ExecutableTask;
 import uk.gov.moj.cpp.jobstore.api.task.ExecutionInfo;
 import uk.gov.moj.cpp.jobstore.api.task.ExecutionStatus;
 
-import static uk.gov.justice.services.cakeshop.jobstore.CakeMadeNotificationTask.CAKE_MADE_NOTIFICATION_TASK;
+import java.util.UUID;
+
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
 
 @Task(CAKE_MADE_NOTIFICATION_TASK)
 public class CakeMadeNotificationTask implements ExecutableTask {

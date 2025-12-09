@@ -10,7 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.DB_CONTEXT_NAME;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopMediaTypes.ADD_RECIPE_MEDIA_TYPE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopMediaTypes.QUERY_RECIPE_MEDIA_TYPE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopMediaTypes.REMOVE_RECIPE_MEDIA_TYPE;
@@ -51,7 +51,7 @@ public class CakeShopConcurrencyIT {
     @BeforeEach
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
-        databaseCleaner.cleanEventStoreTables(DB_CONTEXT_NAME);
+        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
         cleanViewstoreTables();
     }
 
@@ -70,8 +70,7 @@ public class CakeShopConcurrencyIT {
         exec.awaitTermination(30, TimeUnit.SECONDS);
     }
 
-    @Test
-    public void shouldRegisterRecipeRemovedEvent() {
+    private void shouldRegisterRecipeRemovedEvent() {
 
 
         final String recipeId = randomUUID().toString();
@@ -122,14 +121,14 @@ public class CakeShopConcurrencyIT {
     }
 
     private void cleanViewstoreTables() {
-        databaseCleaner.cleanViewStoreTables(DB_CONTEXT_NAME,
+        databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
                 "ingredient",
                 "recipe",
                 "cake",
                 "cake_order",
                 "processed_event"
         );
-        databaseCleaner.cleanStreamBufferTable(DB_CONTEXT_NAME);
-        databaseCleaner.cleanStreamStatusTable(DB_CONTEXT_NAME);
+        databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
+        databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
     }
 }

@@ -44,7 +44,7 @@ public class ReplayEventToEventIndexerIT {
 
     @BeforeEach
     public void cleanDatabases() {
-        final String contextName = "framework";
+        final String contextName = CONTEXT_NAME;
 
         databaseCleaner.cleanEventStoreTables(contextName);
         cleanViewstoreTables();
@@ -113,7 +113,7 @@ public class ReplayEventToEventIndexerIT {
 
     private void cleanViewstoreTables() {
 
-        final String contextName = "framework";
+        final String contextName = CONTEXT_NAME;
 
         databaseCleaner.cleanViewStoreTables(contextName,
                 "ingredient",

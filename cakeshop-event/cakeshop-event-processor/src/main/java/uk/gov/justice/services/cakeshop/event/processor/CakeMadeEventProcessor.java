@@ -1,8 +1,10 @@
 package uk.gov.justice.services.cakeshop.event.processor;
 
-import javax.inject.Inject;
-import javax.json.JsonObject;
-import org.slf4j.Logger;
+import static uk.gov.justice.services.cakeshop.jobstore.CakeMadeNotificationTask.CAKE_MADE_NOTIFICATION_TASK;
+import static uk.gov.justice.services.core.annotation.Component.EVENT_PROCESSOR;
+import static uk.gov.moj.cpp.jobstore.api.task.ExecutionStatus.STARTED;
+import static uk.gov.moj.cpp.jobstore.persistence.Priority.HIGH;
+
 import uk.gov.justice.services.cakeshop.jobstore.CakeMadeJobData;
 import uk.gov.justice.services.common.converter.ObjectToJsonObjectConverter;
 import uk.gov.justice.services.common.util.UtcClock;
@@ -12,12 +14,11 @@ import uk.gov.justice.services.core.sender.Sender;
 import uk.gov.justice.services.messaging.JsonEnvelope;
 import uk.gov.moj.cpp.jobstore.api.ExecutionService;
 import uk.gov.moj.cpp.jobstore.api.task.ExecutionInfo;
-import uk.gov.moj.cpp.jobstore.persistence.Priority;
 
-import static uk.gov.justice.services.cakeshop.jobstore.CakeMadeNotificationTask.CAKE_MADE_NOTIFICATION_TASK;
-import static uk.gov.justice.services.core.annotation.Component.EVENT_PROCESSOR;
-import static uk.gov.moj.cpp.jobstore.api.task.ExecutionStatus.STARTED;
-import static uk.gov.moj.cpp.jobstore.persistence.Priority.HIGH;
+import javax.inject.Inject;
+import javax.json.JsonObject;
+
+import org.slf4j.Logger;
 
 @ServiceComponent(EVENT_PROCESSOR)
 public class CakeMadeEventProcessor {

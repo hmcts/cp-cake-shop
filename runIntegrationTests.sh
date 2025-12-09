@@ -4,7 +4,7 @@
 #Script that runs, liquibase, deploys wars and runs integration tests
 
 #context name is used to derive database name for running liquibase scripts and cake-shop uses framework database instead of it's own database
-CONTEXT_NAME=framework
+CONTEXT_NAME=cakeshop
 
 FRAMEWORK_LIBRARIES_VERSION=$(mvn help:evaluate -Dexpression=framework-libraries.version -q -DforceStdout)
 FRAMEWORK_VERSION=$(mvn help:evaluate -Dexpression=framework.version -q -DforceStdout)
@@ -27,11 +27,12 @@ source $CPP_DOCKER_DIR/build-scripts/integration-test-scipt-functions.sh
 
 source ${CPP_DOCKER_DIR}/build-scripts/download-liquibase-jar-functions.sh
 
+
 runLiquibase() {
   runEventLogLiquibase
   runEventLogAggregateSnapshotLiquibase
   runEventBufferLiquibase
-  runViewStoreLiquibaseForCakeShopContext
+  runViewStoreLiquibase
   runSystemLiquibase
   runEventTrackingLiquibase
   runFileServiceLiquibase
@@ -40,15 +41,15 @@ runLiquibase() {
 }
 
 buildAndDeploy() {
-  #Unlike other contexts, this script doesn't provide capability to run integration tests, main intention of this script is to just deploy cakeshop to local dev environment so that ITs can be executed froM Intellij/IDE for debugging purpose.
   loginToDockerContainerRegistry
-  buildWarsForCakeShopContext #This is not going to run tests, i.e. builds using -DskipTests
+  buildWars
   undeployWarsFromDocker
   buildAndStartContainers
   runLiquibase
   deployWiremock
-  deployWarsForCakeShopContext
-#  contextHealthchecksForCakeShop
+  deployWars
+  cakeshopDeploymentCheck
+  integrationTests
 }
 
 buildAndDeploy

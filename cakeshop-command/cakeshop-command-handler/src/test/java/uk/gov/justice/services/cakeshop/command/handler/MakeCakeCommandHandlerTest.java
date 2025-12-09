@@ -21,12 +21,12 @@ import static uk.gov.justice.services.test.utils.core.matchers.JsonEnvelopePaylo
 import static uk.gov.justice.services.test.utils.core.matchers.JsonEnvelopeStreamMatcher.streamContaining;
 import static uk.gov.justice.services.test.utils.core.messaging.MetadataBuilderFactory.metadataWithRandomUUID;
 
-import uk.gov.justice.services.core.aggregate.AggregateService;
-import uk.gov.justice.services.eventsourcing.source.core.EventSource;
-import uk.gov.justice.services.eventsourcing.source.core.EventStream;
 import uk.gov.justice.services.cakeshop.domain.aggregate.Recipe;
 import uk.gov.justice.services.cakeshop.domain.event.CakeMade;
 import uk.gov.justice.services.cakeshop.domain.event.RecipeAdded;
+import uk.gov.justice.services.core.aggregate.AggregateService;
+import uk.gov.justice.services.eventsourcing.source.core.EventSource;
+import uk.gov.justice.services.eventsourcing.source.core.EventStream;
 import uk.gov.justice.services.messaging.JsonEnvelope;
 
 import java.util.UUID;

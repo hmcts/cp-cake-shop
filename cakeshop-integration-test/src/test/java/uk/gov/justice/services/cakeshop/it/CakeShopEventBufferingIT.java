@@ -45,9 +45,9 @@ public class CakeShopEventBufferingIT {
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
 
-        databaseCleaner.cleanEventStoreTables("framework");
+        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(
-                "framework",
+                CONTEXT_NAME,
                 "stream_buffer",
                 "stream_status",
                 "stream_error_hash",

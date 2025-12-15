@@ -8,6 +8,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.LENIENT;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BASE_URI;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BY_ERROR_HASH_URI_TEMPLATE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BY_HAS_ERROR;
@@ -47,9 +48,9 @@ public class RestResourcesIT {
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
 
-        databaseCleaner.cleanEventStoreTables("framework");
+        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(
-                "framework",
+                CONTEXT_NAME,
                 "stream_buffer",
                 "stream_status",
                 "stream_error_hash",

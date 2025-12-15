@@ -27,15 +27,15 @@ import static uk.gov.justice.services.test.utils.core.matchers.JsonEnvelopePaylo
 import static uk.gov.justice.services.test.utils.core.matchers.JsonEnvelopeStreamMatcher.streamContaining;
 import static uk.gov.justice.services.test.utils.core.messaging.MetadataBuilderFactory.metadataOf;
 
-import uk.gov.justice.services.core.aggregate.AggregateService;
-import uk.gov.justice.services.eventsourcing.source.core.EventSource;
-import uk.gov.justice.services.eventsourcing.source.core.EventStream;
-import uk.gov.justice.services.eventsourcing.source.core.Tolerance;
 import uk.gov.justice.services.cakeshop.domain.aggregate.Recipe;
 import uk.gov.justice.services.cakeshop.domain.event.RecipeAdded;
 import uk.gov.justice.services.cakeshop.domain.event.RecipePhotographAdded;
 import uk.gov.justice.services.cakeshop.domain.event.RecipeRemoved;
 import uk.gov.justice.services.cakeshop.domain.event.RecipeRenamed;
+import uk.gov.justice.services.core.aggregate.AggregateService;
+import uk.gov.justice.services.eventsourcing.source.core.EventSource;
+import uk.gov.justice.services.eventsourcing.source.core.EventStream;
+import uk.gov.justice.services.eventsourcing.source.core.Tolerance;
 import uk.gov.justice.services.messaging.Envelope;
 import uk.gov.justice.services.messaging.JsonEnvelope;
 

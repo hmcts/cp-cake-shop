@@ -68,10 +68,9 @@ public class SuspendIT {
         querier = new Querier(client);
         commandSender = new CommandSender(client, eventFactory);
 
-        final String contextName = "framework";
-        databaseCleaner.cleanSystemTables(contextName);
-        databaseCleaner.cleanEventStoreTables(contextName);
-        databaseCleaner.cleanViewStoreTables(contextName,
+        databaseCleaner.cleanSystemTables(CONTEXT_NAME);
+        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
+        databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
                 "cake",
                 "cake_order",
                 "recipe",

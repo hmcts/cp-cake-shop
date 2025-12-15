@@ -1,9 +1,9 @@
 package uk.gov.justice.services.cakeshop.jobstore;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 class CakeMadeJobDataTest {
 

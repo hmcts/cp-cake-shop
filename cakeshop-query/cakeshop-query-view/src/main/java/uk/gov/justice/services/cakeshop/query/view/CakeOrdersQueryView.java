@@ -2,12 +2,12 @@ package uk.gov.justice.services.cakeshop.query.view;
 
 import static uk.gov.justice.services.core.enveloper.Enveloper.envelop;
 
-import uk.gov.justice.services.core.annotation.Component;
-import uk.gov.justice.services.core.annotation.Handles;
-import uk.gov.justice.services.core.annotation.ServiceComponent;
 import uk.gov.justice.services.cakeshop.query.view.request.SearchCakeOrder;
 import uk.gov.justice.services.cakeshop.query.view.response.CakeOrderView;
 import uk.gov.justice.services.cakeshop.query.view.service.CakeOrderService;
+import uk.gov.justice.services.core.annotation.Component;
+import uk.gov.justice.services.core.annotation.Handles;
+import uk.gov.justice.services.core.annotation.ServiceComponent;
 import uk.gov.justice.services.messaging.Envelope;
 
 import javax.inject.Inject;

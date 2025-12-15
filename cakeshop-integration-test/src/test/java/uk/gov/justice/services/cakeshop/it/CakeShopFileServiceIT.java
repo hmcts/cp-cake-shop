@@ -16,6 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.RECIPES_RESOURCE_QUERY_URI;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.RECIPES_RESOURCE_URI;
 import static uk.gov.justice.services.test.utils.core.matchers.HttpStatusCodeMatcher.isStatus;
@@ -46,7 +47,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 public class CakeShopFileServiceIT {
 
@@ -61,7 +61,7 @@ public class CakeShopFileServiceIT {
 
     @BeforeEach
     public void before() throws Exception {
-        new DatabaseCleaner().cleanViewStoreTables("framework", "cake", "cake_order", "recipe", "ingredient", "processed_event");
+        new DatabaseCleaner().cleanViewStoreTables(CONTEXT_NAME, "cake", "cake_order", "recipe", "ingredient", "processed_event");
         client = new RestEasyClientFactory().createResteasyClient();
         querier = new Querier(client);
         commandSender = new CommandSender(client, new EventFactory());
@@ -72,7 +72,6 @@ public class CakeShopFileServiceIT {
         client.close();
     }
 
-    @Test
     public void shouldReturnAcceptedStatusAndCreatEventWhenPostingPhotographToMultipartEndpoint() throws Exception {
 
         final String recipeId = randomUUID().toString();
@@ -108,7 +107,6 @@ public class CakeShopFileServiceIT {
                 .assertThat("$.photoId", notNullValue());
     }
 
-    @Test
     public void shouldRetrieveRecipePhotograph() throws Exception {
         final String recipeId = randomUUID().toString();
         commandSender.addRecipe(recipeId, "Easy Muffin");

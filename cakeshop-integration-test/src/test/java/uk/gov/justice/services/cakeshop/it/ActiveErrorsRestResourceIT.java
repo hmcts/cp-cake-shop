@@ -37,9 +37,9 @@ public class ActiveErrorsRestResourceIT {
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
 
-        databaseCleaner.cleanEventStoreTables("framework");
+        databaseCleaner.cleanEventStoreTables("cakeshop");
         databaseCleaner.cleanViewStoreTables(
-                "framework",
+                "cakeshop",
                 "stream_buffer",
                 "stream_status",
                 "stream_error_hash",
@@ -59,7 +59,7 @@ public class ActiveErrorsRestResourceIT {
     @Nested
     class ActiveStreamErrorsResourceIT {
 
-        @Test
+        @Test()
         public void shouldGetTheJsonForActiveErrorsInTheStreamErrorTables() throws Exception {
             final Optional<StreamError> streamErrorOptional = testDataManager.createAnEventWithEventListenerFailure();
             if (streamErrorOptional.isEmpty()) {

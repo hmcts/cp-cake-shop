@@ -15,6 +15,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopMediaTypes.ADD_RECIPE_MEDIA_TYPE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopMediaTypes.REMOVE_RECIPE_MEDIA_TYPE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.OVEN_RESOURCE_CUSTOM_URI;
@@ -74,9 +75,9 @@ public class CakeShopIT {
         querier = new Querier(client);
         commandSender = new CommandSender(client, eventFactory);
 
-        databaseCleaner.cleanEventStoreTables("framework");
+        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(
-                "framework",
+                CONTEXT_NAME,
                 "stream_buffer",
                 "stream_status",
                 "stream_error_hash",

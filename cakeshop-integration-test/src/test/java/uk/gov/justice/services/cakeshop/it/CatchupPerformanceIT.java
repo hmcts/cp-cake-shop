@@ -7,7 +7,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
-import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.DB_CONTEXT_NAME;
 import static uk.gov.justice.services.eventstore.management.commands.EventCatchupCommand.CATCHUP;
 import static uk.gov.justice.services.jmx.api.mbean.CommandRunMode.GUARDED;
 import static uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParameters.withNoCommandParameters;
@@ -52,9 +51,9 @@ public class CatchupPerformanceIT {
 
     @BeforeEach
     public void before() {
-        databaseCleaner.cleanEventStoreTables(DB_CONTEXT_NAME);
+        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
         cleanViewstoreTables();
-        databaseCleaner.cleanSystemTables(DB_CONTEXT_NAME);
+        databaseCleaner.cleanSystemTables(CONTEXT_NAME);
     }
 
     @Test
@@ -156,14 +155,14 @@ public class CatchupPerformanceIT {
     }
 
     private void cleanViewstoreTables() {
-        databaseCleaner.cleanViewStoreTables(DB_CONTEXT_NAME,
+        databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
                 "ingredient",
                 "recipe",
                 "cake",
                 "cake_order",
                 "processed_event"
         );
-        databaseCleaner.cleanStreamBufferTable(DB_CONTEXT_NAME);
-        databaseCleaner.cleanStreamStatusTable(DB_CONTEXT_NAME);
+        databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
+        databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
     }
 }

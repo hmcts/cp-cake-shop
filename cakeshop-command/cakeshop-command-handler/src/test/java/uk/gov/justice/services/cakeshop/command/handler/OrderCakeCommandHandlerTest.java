@@ -18,10 +18,10 @@ import static uk.gov.justice.services.test.utils.core.matchers.JsonEnvelopeStrea
 import static uk.gov.justice.services.test.utils.core.messaging.JsonEnvelopeBuilder.envelope;
 import static uk.gov.justice.services.test.utils.core.messaging.MetadataBuilderFactory.metadataWithRandomUUID;
 
+import uk.gov.justice.services.cakeshop.domain.event.CakeOrdered;
 import uk.gov.justice.services.core.aggregate.AggregateService;
 import uk.gov.justice.services.eventsourcing.source.core.EventSource;
 import uk.gov.justice.services.eventsourcing.source.core.EventStream;
-import uk.gov.justice.services.cakeshop.domain.event.CakeOrdered;
 import uk.gov.justice.services.messaging.JsonEnvelope;
 
 import java.time.ZonedDateTime;

@@ -2,10 +2,10 @@ package uk.gov.justice.services.cakeshop.event.listener;
 
 import static uk.gov.justice.services.core.annotation.Component.EVENT_LISTENER;
 
-import uk.gov.justice.services.core.annotation.Handles;
-import uk.gov.justice.services.core.annotation.ServiceComponent;
 import uk.gov.justice.services.cakeshop.persistence.CakeOrderRepository;
 import uk.gov.justice.services.cakeshop.persistence.entity.CakeOrder;
+import uk.gov.justice.services.core.annotation.Handles;
+import uk.gov.justice.services.core.annotation.ServiceComponent;
 import uk.gov.justice.services.messaging.Envelope;
 
 import javax.inject.Inject;

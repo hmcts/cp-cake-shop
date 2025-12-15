@@ -1,23 +1,5 @@
 package uk.gov.justice.services.cakeshop.event.processor;
 
-import java.time.ZonedDateTime;
-import java.util.UUID;
-import javax.json.JsonObject;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import uk.gov.justice.services.cakeshop.jobstore.CakeMadeJobData;
-import uk.gov.justice.services.common.converter.ObjectToJsonObjectConverter;
-import uk.gov.justice.services.common.util.UtcClock;
-import uk.gov.justice.services.core.sender.Sender;
-import uk.gov.justice.services.messaging.JsonEnvelope;
-import uk.gov.justice.services.messaging.spi.DefaultJsonEnvelopeProvider;
-import uk.gov.moj.cpp.jobstore.api.ExecutionService;
-import uk.gov.moj.cpp.jobstore.api.task.ExecutionInfo;
-
 import static java.time.ZoneOffset.UTC;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,6 +10,27 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.justice.services.messaging.spi.DefaultJsonMetadata.metadataBuilder;
 import static uk.gov.moj.cpp.jobstore.api.task.ExecutionStatus.STARTED;
+
+import uk.gov.justice.services.cakeshop.jobstore.CakeMadeJobData;
+import uk.gov.justice.services.common.converter.ObjectToJsonObjectConverter;
+import uk.gov.justice.services.common.util.UtcClock;
+import uk.gov.justice.services.core.sender.Sender;
+import uk.gov.justice.services.messaging.JsonEnvelope;
+import uk.gov.justice.services.messaging.spi.DefaultJsonEnvelopeProvider;
+import uk.gov.moj.cpp.jobstore.api.ExecutionService;
+import uk.gov.moj.cpp.jobstore.api.task.ExecutionInfo;
+
+import java.time.ZonedDateTime;
+import java.util.UUID;
+
+import javax.json.JsonObject;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class CakeMadeEventProcessorTest {

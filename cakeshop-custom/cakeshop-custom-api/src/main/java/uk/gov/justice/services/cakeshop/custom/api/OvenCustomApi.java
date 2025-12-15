@@ -4,10 +4,10 @@ import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static uk.gov.justice.services.core.enveloper.Enveloper.envelop;
 
-import uk.gov.justice.services.core.annotation.CustomServiceComponent;
-import uk.gov.justice.services.core.annotation.Handles;
 import uk.gov.justice.services.cakeshop.custom.api.response.OvenStatus;
 import uk.gov.justice.services.cakeshop.custom.api.response.OvensStatus;
+import uk.gov.justice.services.core.annotation.CustomServiceComponent;
+import uk.gov.justice.services.core.annotation.Handles;
 import uk.gov.justice.services.messaging.Envelope;
 import uk.gov.justice.services.messaging.JsonEnvelope;
 

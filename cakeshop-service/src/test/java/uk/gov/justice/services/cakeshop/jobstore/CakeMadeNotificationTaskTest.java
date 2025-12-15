@@ -1,22 +1,5 @@
 package uk.gov.justice.services.cakeshop.jobstore;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import javax.json.JsonObject;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import uk.gov.justice.services.common.converter.ObjectToJsonObjectConverter;
-import uk.gov.justice.services.common.util.UtcClock;
-import uk.gov.justice.services.messaging.jms.JmsSender;
-import uk.gov.moj.cpp.jobstore.api.task.ExecutionInfo;
-import uk.gov.moj.cpp.jobstore.api.task.ExecutionStatus;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,6 +9,26 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+
+import uk.gov.justice.services.common.converter.ObjectToJsonObjectConverter;
+import uk.gov.justice.services.common.util.UtcClock;
+import uk.gov.justice.services.messaging.jms.JmsSender;
+import uk.gov.moj.cpp.jobstore.api.task.ExecutionInfo;
+import uk.gov.moj.cpp.jobstore.api.task.ExecutionStatus;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+
+import javax.json.JsonObject;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class CakeMadeNotificationTaskTest {

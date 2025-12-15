@@ -9,7 +9,7 @@ import static javax.ws.rs.core.Response.Status.OK;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.DB_CONTEXT_NAME;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopMediaTypes.ORDER_CAKE_MEDIA_TYPE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.ORDERS_RESOURCE_URI;
 import static uk.gov.justice.services.test.utils.core.matchers.HttpStatusCodeMatcher.isStatus;
@@ -37,7 +37,7 @@ public class UnifiedSearchIndexerIT {
 
     @BeforeEach
     public void before() throws Exception {
-        databaseCleaner.cleanEventStoreTables(DB_CONTEXT_NAME);
+        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
         cleanViewstoreTables();
     }
 
@@ -72,14 +72,14 @@ public class UnifiedSearchIndexerIT {
     }
 
     private void cleanViewstoreTables() {
-        databaseCleaner.cleanViewStoreTables(DB_CONTEXT_NAME,
+        databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
                 "ingredient",
                 "recipe",
                 "cake",
                 "cake_order",
                 "processed_event"
         );
-        databaseCleaner.cleanStreamBufferTable(DB_CONTEXT_NAME);
-        databaseCleaner.cleanStreamStatusTable(DB_CONTEXT_NAME);
+        databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
+        databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
     }
 }

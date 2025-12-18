@@ -1,45 +1,51 @@
-name: CJS Library Build & Publish
- 
+name: Cakeshop Verify & Validation
+
+# Need to update this for actual migration
 trigger:
-  tags:
-    include:
-      - 'release-*'
   branches:
     include:
       - main
+      #- 'team/*'
+      - 'dev/*'
+    exclude:
+      - 'dev/release-*'
   paths:
     include:
       - '*'
- 
+
 pr:
   - '*'
- 
+
 resources:
   repositories:
     - repository: cppAzureDevOpsTemplates
       type: github
       name: hmcts/cpp-azure-devops-templates
       endpoint: 'hmcts'
-      ref: 'main'
- 
-    - repository: buildSettings
-      type: github
-      name: hmcts/cp-build-settings
-      endpoint: 'hmcts'
-      ref: 'main'
- 
+      #ref: 'main'
+      ref: 'cakeshop-validation-pipeline'
+
 pool:
-  name: 'MDV-ADO-AGENT-AKS-01'
+  name: "MDV-ADO-AGENT-AKS-01"
   demands:
-    - identifier -equals centos8-j17-postgres
- 
+    - identifier -equals centos8-j17
+
 variables:
-  - name: sonarqubeProject
-    value: "uk.gov.justice:cake-shop"
-  - group: "cjs-common-platform"
+  sonarqubeProject: "uk.gov.moj.cpp.cakeshop:cakeshop-parent"
+  service_Name: 'cakeshop'
+  itTest_Folder: 'cakeshop-integration-test'
 
 stages:
-  - template: pipelines/cp-framework-build.yaml@cppAzureDevOpsTemplates
-    parameters:
-      sonarqube_project: ${{ variables['sonarqubeProject'] }}
-      coveralls_repo_token: $(cp-cake-shop)
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      - template: pipelines/context-verify.yaml@cppAzureDevOpsTemplates
+        parameters:
+          sonarqube_project: ${{ variables['sonarqubeProject'] }}
+          sonarQubeType: 'sonarQubeAKS'
+
+  - ${{ if eq(variables['Build.Reason'], 'IndividualCI') }}:
+      - template: pipelines/context-validation.yaml@cppAzureDevOpsTemplates
+        parameters:
+          repo: "$(Build.Repository.Name)"
+          sonarQubeType: 'sonarQubeAKS'
+          serviceName: ${{ variables['service_Name'] }}
+          itTestFolder: ${{ variables['itTest_Folder'] }}

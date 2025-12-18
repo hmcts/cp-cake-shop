@@ -1,11 +1,12 @@
 package uk.gov.justice.services.cakeshop.it;
 
-import static com.jayway.jsonassert.JsonAssert.with;
-import static java.util.UUID.randomUUID;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static uk.gov.justice.services.test.utils.core.reflection.ReflectionUtil.setField;
-
+import java.util.Optional;
+import java.util.UUID;
+import javax.sql.DataSource;
+import javax.ws.rs.client.Client;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import uk.gov.justice.domain.snapshot.AggregateSnapshot;
 import uk.gov.justice.domain.snapshot.DefaultObjectInputStreamStrategy;
 import uk.gov.justice.services.cakeshop.domain.aggregate.Recipe;
@@ -18,15 +19,11 @@ import uk.gov.justice.services.core.aggregate.exception.AggregateChangeDetectedE
 import uk.gov.justice.services.eventsourcing.jdbc.snapshot.SnapshotJdbcRepository;
 import uk.gov.justice.services.eventsourcing.jdbc.snapshot.StandaloneSnapshotJdbcRepositoryFactory;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static com.jayway.jsonassert.JsonAssert.with;
+import static java.util.UUID.randomUUID;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static uk.gov.justice.services.test.utils.core.reflection.ReflectionUtil.setField;
 
 public class SnapshotCakeShopIT {
 

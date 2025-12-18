@@ -1,5 +1,27 @@
 package uk.gov.justice.services.cakeshop.it;
 
+import java.util.Optional;
+import java.util.UUID;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response.Status;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import uk.gov.justice.services.cakeshop.it.helpers.ApiResponse;
+import uk.gov.justice.services.cakeshop.it.helpers.CommandSender;
+import uk.gov.justice.services.cakeshop.it.helpers.EventFactory;
+import uk.gov.justice.services.cakeshop.it.helpers.JmxParametersFactory;
+import uk.gov.justice.services.cakeshop.it.helpers.Querier;
+import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
+import uk.gov.justice.services.jmx.api.domain.SystemCommandStatus;
+import uk.gov.justice.services.jmx.api.mbean.SystemCommanderMBean;
+import uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParameters;
+import uk.gov.justice.services.jmx.system.command.client.SystemCommanderClient;
+import uk.gov.justice.services.jmx.system.command.client.TestSystemCommanderClientFactory;
+import uk.gov.justice.services.test.utils.core.messaging.Poller;
+import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
+
 import static com.jayway.jsonassert.JsonAssert.with;
 import static java.lang.String.format;
 import static java.lang.Thread.sleep;
@@ -20,31 +42,6 @@ import static uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParame
 import static uk.gov.justice.services.management.suspension.commands.SuspendCommand.SUSPEND;
 import static uk.gov.justice.services.management.suspension.commands.UnsuspendCommand.UNSUSPEND;
 import static uk.gov.justice.services.test.utils.core.matchers.HttpStatusCodeMatcher.isStatus;
-
-import uk.gov.justice.services.cakeshop.it.helpers.ApiResponse;
-import uk.gov.justice.services.cakeshop.it.helpers.CommandSender;
-import uk.gov.justice.services.cakeshop.it.helpers.EventFactory;
-import uk.gov.justice.services.cakeshop.it.helpers.JmxParametersFactory;
-import uk.gov.justice.services.cakeshop.it.helpers.Querier;
-import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
-import uk.gov.justice.services.jmx.api.domain.SystemCommandStatus;
-import uk.gov.justice.services.jmx.api.mbean.SystemCommanderMBean;
-import uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParameters;
-import uk.gov.justice.services.jmx.system.command.client.SystemCommanderClient;
-import uk.gov.justice.services.jmx.system.command.client.TestSystemCommanderClientFactory;
-import uk.gov.justice.services.test.utils.core.messaging.Poller;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
-
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response.Status;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
 
 public class SuspendIT {
 

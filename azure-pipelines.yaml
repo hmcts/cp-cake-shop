@@ -1,11 +1,11 @@
 name: Cakeshop Verify & Validation
 
-# Need to update this for actual migration
 trigger:
   branches:
     include:
       - main
-      #- 'team/*'
+      - 'team/*'
+      #remvoe below entry once validation pipeline is working
       - 'dev/*'
     exclude:
       - 'dev/release-*'
@@ -23,6 +23,7 @@ resources:
       name: hmcts/cpp-azure-devops-templates
       endpoint: 'hmcts'
       #ref: 'main'
+      #remvoe below entry and uncomment above entry once validation pipeline is working
       ref: 'cakeshop-validation-pipeline'
 
 pool:
@@ -31,7 +32,7 @@ pool:
     - identifier -equals centos8-j17
 
 variables:
-  sonarqubeProject: "uk.gov.moj.cpp.cakeshop:cakeshop-parent"
+  sonarqubeProject: "uk.gov.justice.cakeshop"
   service_Name: 'cakeshop'
   itTest_Folder: 'cakeshop-integration-test'
 

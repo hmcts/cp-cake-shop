@@ -1,11 +1,14 @@
 package uk.gov.justice.services.cakeshop.it;
 
-import static com.jayway.jsonassert.JsonAssert.with;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
-import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.ACTIVE_STREAM_ERRORS_QUERY_BASE_URI;
-
+import java.util.Optional;
+import javax.sql.DataSource;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
 import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
 import uk.gov.justice.services.cakeshop.it.helpers.TestDataManager;
@@ -13,17 +16,11 @@ import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamEr
 import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorHash;
 import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
-import java.util.Optional;
-
-import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import static com.jayway.jsonassert.JsonAssert.with;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.ACTIVE_STREAM_ERRORS_QUERY_BASE_URI;
 
 public class ActiveErrorsRestResourceIT {
 
@@ -59,7 +56,7 @@ public class ActiveErrorsRestResourceIT {
     @Nested
     class ActiveStreamErrorsResourceIT {
 
-        @Test()
+        @Test
         public void shouldGetTheJsonForActiveErrorsInTheStreamErrorTables() throws Exception {
             final Optional<StreamError> streamErrorOptional = testDataManager.createAnEventWithEventListenerFailure();
             if (streamErrorOptional.isEmpty()) {

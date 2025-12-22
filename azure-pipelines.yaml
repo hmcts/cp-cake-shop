@@ -5,8 +5,6 @@ trigger:
     include:
       - main
       - 'team/*'
-      #remvoe below entry once validation pipeline is working
-      - 'dev/*'
     exclude:
       - 'dev/release-*'
   paths:
@@ -22,9 +20,7 @@ resources:
       type: github
       name: hmcts/cpp-azure-devops-templates
       endpoint: 'hmcts'
-      #ref: 'main'
-      #remvoe below entry and uncomment above entry once validation pipeline is working
-      ref: 'cakeshop-validation-pipeline'
+      ref: 'main'
 
 pool:
   name: "MDV-ADO-AGENT-AKS-01"

@@ -1,13 +1,11 @@
 package uk.gov.justice.services.cakeshop.it;
 
-import static java.util.Optional.of;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
-import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
-
+import java.util.Optional;
+import javax.sql.DataSource;
+import javax.ws.rs.client.Client;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
 import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
 import uk.gov.justice.services.cakeshop.it.helpers.StreamStatusFinder;
@@ -18,14 +16,13 @@ import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamEr
 import uk.gov.justice.services.test.utils.core.messaging.Poller;
 import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
-import java.util.Optional;
-
-import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static java.util.Optional.of;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 
 public class StreamErrorHandlingIT {
 

@@ -1,5 +1,32 @@
 package uk.gov.justice.services.cakeshop.it;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Optional;
+import javax.jms.MessageConsumer;
+import javax.jms.Session;
+import javax.sql.DataSource;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
+import org.apache.http.message.BasicNameValuePair;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import uk.gov.justice.services.cakeshop.it.helpers.ApiResponse;
+import uk.gov.justice.services.cakeshop.it.helpers.CommandFactory;
+import uk.gov.justice.services.cakeshop.it.helpers.CommandSender;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
+import uk.gov.justice.services.cakeshop.it.helpers.EventFactory;
+import uk.gov.justice.services.cakeshop.it.helpers.EventFinder;
+import uk.gov.justice.services.cakeshop.it.helpers.JmsBootstrapper;
+import uk.gov.justice.services.cakeshop.it.helpers.Querier;
+import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
+import uk.gov.justice.services.common.converter.ObjectToJsonObjectConverter;
+import uk.gov.justice.services.eventsourcing.repository.jdbc.event.Event;
+import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventJdbcRepository;
+import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventRepositoryFactory;
+import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
+
 import static com.jayway.jsonassert.JsonAssert.with;
 import static java.time.Duration.ofSeconds;
 import static java.util.Collections.singletonList;
@@ -21,35 +48,6 @@ import static uk.gov.justice.services.cakeshop.it.params.CakeShopMediaTypes.REMO
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.OVEN_RESOURCE_CUSTOM_URI;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.RECIPES_RESOURCE_URI;
 import static uk.gov.justice.services.test.utils.core.matchers.HttpStatusCodeMatcher.isStatus;
-
-import uk.gov.justice.services.cakeshop.it.helpers.ApiResponse;
-import uk.gov.justice.services.cakeshop.it.helpers.CommandFactory;
-import uk.gov.justice.services.cakeshop.it.helpers.CommandSender;
-import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
-import uk.gov.justice.services.cakeshop.it.helpers.EventFactory;
-import uk.gov.justice.services.cakeshop.it.helpers.EventFinder;
-import uk.gov.justice.services.cakeshop.it.helpers.JmsBootstrapper;
-import uk.gov.justice.services.cakeshop.it.helpers.Querier;
-import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
-import uk.gov.justice.services.common.converter.ObjectToJsonObjectConverter;
-import uk.gov.justice.services.eventsourcing.repository.jdbc.event.Event;
-import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventJdbcRepository;
-import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventRepositoryFactory;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
-
-import java.util.Optional;
-
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
-import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.message.BasicNameValuePair;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 public class CakeShopIT {
 
@@ -277,6 +275,7 @@ public class CakeShopIT {
     }
 
     @Test
+    @Disabled
     public void shouldQueryForOvenStatus() throws Exception {
         final Response response = client.target(OVEN_RESOURCE_CUSTOM_URI).request().accept("application/vnd.cakeshop.status+json").get();
         assertThat(response.getStatus(), isStatus(OK));

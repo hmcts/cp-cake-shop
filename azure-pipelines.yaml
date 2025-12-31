@@ -21,7 +21,7 @@ resources:
       type: github
       name: hmcts/cpp-azure-devops-templates
       endpoint: 'hmcts'
-      ref: 'main'
+      ref: 'cakeshop-validation-pipeline'
 
 pool:
   name: "MDV-ADO-AGENT-AKS-01"

@@ -5,6 +5,7 @@ trigger:
     include:
       - main
       - 'team/*'
+      - 'dev/test-*'
     exclude:
       - 'dev/release-*'
   paths:

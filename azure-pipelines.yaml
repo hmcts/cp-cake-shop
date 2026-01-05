@@ -1,4 +1,4 @@
-name: Cakeshop Verify & Validation.
+name: Cakeshop Verify & Validation
 
 trigger:
   branches:

@@ -43,6 +43,8 @@
     <properties>
         <cpp.repo.name>cake-shop</cpp.repo.name>
 
+        <plugins.maven.jgitflow.version>1.0-m5.1</plugins.maven.jgitflow.version>
+        <jgitflow.maven.developBranchName>main</jgitflow.maven.developBranchName>
         <wildfly.version>26.1.2.Final</wildfly.version>
         <wildfly.maven.plugin.version>4.1.1.Final</wildfly.maven.plugin.version>
 
@@ -217,6 +219,24 @@
                         </dependency>
                     </dependencies>
                 </plugin>
+                <plugin>
+                    <groupId>external.atlassian.jgitflow</groupId>
+                    <artifactId>jgitflow-maven-plugin</artifactId>
+                    <version>${plugins.maven.jgitflow.version}</version>
+                    <configuration>
+                        <flowInitContext>
+                            <masterBranchName>dev/release</masterBranchName>
+                            <developBranchName>${jgitflow.maven.developBranchName}</developBranchName>
+                            <featureBranchPrefix>dev/feature-</featureBranchPrefix>
+                            <releaseBranchPrefix>dev/release-</releaseBranchPrefix>
+                            <hotfixBranchPrefix>dev/hotfix-</hotfixBranchPrefix>
+                            <versionTagPrefix>v</versionTagPrefix>
+                        </flowInitContext>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <enableSshAgent>true</enableSshAgent>
+                        <pushReleases>true</pushReleases>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -262,6 +282,10 @@
                         <version>${framework-libraries.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
             </plugin>
         </plugins>
 

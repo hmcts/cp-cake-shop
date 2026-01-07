@@ -45,7 +45,7 @@
 
         <plugins.maven.jgitflow.version>1.0-m5.1</plugins.maven.jgitflow.version>
         <jgitflow.maven.developBranchName>main</jgitflow.maven.developBranchName>
-        <!--<pushReleases>true</pushReleases>-->
+        <pushReleases>true</pushReleases>
         <wildfly.version>26.1.2.Final</wildfly.version>
         <wildfly.maven.plugin.version>4.1.1.Final</wildfly.maven.plugin.version>
 
@@ -235,7 +235,7 @@
                         </flowInitContext>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <enableSshAgent>true</enableSshAgent>
-                        <!--<pushReleases>true</pushReleases>-->
+                        <pushReleases>true</pushReleases>
                     </configuration>
                 </plugin>
             </plugins>

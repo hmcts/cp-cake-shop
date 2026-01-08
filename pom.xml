@@ -12,7 +12,7 @@
 
     <groupId>uk.gov.justice.services</groupId>
     <artifactId>cake-shop</artifactId>
-    <version>17.104.3-SNAPSHOT</version>
+    <version>17.104.3</version>
     <packaging>pom</packaging>
     
 

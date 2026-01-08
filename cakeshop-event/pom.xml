@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>uk.gov.justice.services</groupId>
         <artifactId>cake-shop</artifactId>
@@ -167,8 +165,7 @@
                                     </includes>
                                     <excludes>
                                     </excludes>
-                                    <generatorProperties
-                                            implementation="uk.gov.justice.schema.catalog.generation.maven.CatalogGeneratorProperties">
+                                    <generatorProperties implementation="uk.gov.justice.schema.catalog.generation.maven.CatalogGeneratorProperties">
                                         <catalogName>${project.artifactId}</catalogName>
                                         <jsonSchemaPath>json/schema/</jsonSchemaPath>
                                     </generatorProperties>
@@ -209,8 +206,7 @@
                                     <outputDirectory>${project.build.directory}/generated-sources
                                     </outputDirectory>
                                     <basePackageName>uk.gov.justice.api</basePackageName>
-                                    <generatorProperties
-                                            implementation="uk.gov.justice.services.generators.commons.config.CommonGeneratorProperties">
+                                    <generatorProperties implementation="uk.gov.justice.services.generators.commons.config.CommonGeneratorProperties">
                                         <serviceComponent>${cpp.service-component}
                                         </serviceComponent>
                                     </generatorProperties>

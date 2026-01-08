@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>cakeshop-query</artifactId>
         <groupId>uk.gov.justice.services</groupId>
@@ -100,12 +98,12 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <generatorName >
+                            <generatorName>
                                 uk.gov.justice.services.clients.rest.generator.RestClientGenerator
                             </generatorName>
                             <parserName>uk.gov.justice.maven.generator.io.files.parser.RamlFileParser</parserName>
                             <basePackageName>uk.gov.justice.api</basePackageName>
-                            <generatorProperties  implementation="uk.gov.justice.services.generators.commons.config.CommonGeneratorProperties">
+                            <generatorProperties implementation="uk.gov.justice.services.generators.commons.config.CommonGeneratorProperties">
                                 <serviceComponent>${cpp.service-component}
                                 </serviceComponent>
                             </generatorProperties>

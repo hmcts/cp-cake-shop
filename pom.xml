@@ -334,7 +334,7 @@
                                         <exclude>**/*.messaging.raml</exclude>
                                     </excludes>
                                     <rules>
-                                        <ActionsHaveHandlers />
+                                        <ActionsHaveHandlers/>
                                     </rules>
                                 </configuration>
                             </execution>

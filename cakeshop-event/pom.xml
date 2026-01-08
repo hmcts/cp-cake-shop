@@ -165,8 +165,7 @@
                                     </includes>
                                     <excludes>
                                     </excludes>
-                                    <generatorProperties
-                                            implementation="uk.gov.justice.schema.catalog.generation.maven.CatalogGeneratorProperties">
+                                    <generatorProperties implementation="uk.gov.justice.schema.catalog.generation.maven.CatalogGeneratorProperties">
                                         <catalogName>${project.artifactId}</catalogName>
                                         <jsonSchemaPath>json/schema/</jsonSchemaPath>
                                     </generatorProperties>
@@ -207,8 +206,7 @@
                                     <outputDirectory>${project.build.directory}/generated-sources
                                     </outputDirectory>
                                     <basePackageName>uk.gov.justice.api</basePackageName>
-                                    <generatorProperties
-                                            implementation="uk.gov.justice.services.generators.commons.config.CommonGeneratorProperties">
+                                    <generatorProperties implementation="uk.gov.justice.services.generators.commons.config.CommonGeneratorProperties">
                                         <serviceComponent>${cpp.service-component}
                                         </serviceComponent>
                                     </generatorProperties>

@@ -98,12 +98,12 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <generatorName >
+                            <generatorName>
                                 uk.gov.justice.services.clients.rest.generator.RestClientGenerator
                             </generatorName>
                             <parserName>uk.gov.justice.maven.generator.io.files.parser.RamlFileParser</parserName>
                             <basePackageName>uk.gov.justice.api</basePackageName>
-                            <generatorProperties  implementation="uk.gov.justice.services.generators.commons.config.CommonGeneratorProperties">
+                            <generatorProperties implementation="uk.gov.justice.services.generators.commons.config.CommonGeneratorProperties">
                                 <serviceComponent>${cpp.service-component}
                                 </serviceComponent>
                             </generatorProperties>

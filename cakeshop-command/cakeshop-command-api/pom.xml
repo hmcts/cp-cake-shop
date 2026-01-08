@@ -98,8 +98,7 @@
                             <parserName>
                                 uk.gov.justice.maven.generator.io.files.parser.RamlFileParser
                             </parserName>
-                            <generatorProperties
-                                    implementation="uk.gov.justice.services.generators.commons.config.CommonGeneratorProperties">
+                            <generatorProperties implementation="uk.gov.justice.services.generators.commons.config.CommonGeneratorProperties">
                                 <serviceComponent>${cpp.service-component}
                                 </serviceComponent>
                             </generatorProperties>

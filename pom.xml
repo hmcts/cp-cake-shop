@@ -267,7 +267,7 @@
             <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>
                 <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>${jgitflow-maven-plugin.version}</version>
+                <version>${plugins.maven.jgitflow.version}</version>
                 <configuration>
                     <flowInitContext>
                         <masterBranchName>dev/release</masterBranchName>

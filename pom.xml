@@ -218,24 +218,6 @@
                         </dependency>
                     </dependencies>
                 </plugin>
-                <plugin>
-                    <groupId>external.atlassian.jgitflow</groupId>
-                    <artifactId>jgitflow-maven-plugin</artifactId>
-                    <version>${plugins.maven.jgitflow.version}</version>
-                    <configuration>
-                        <flowInitContext>
-                            <masterBranchName>dev/release</masterBranchName>
-                            <developBranchName>${jgitflow.maven.developBranchName}</developBranchName>
-                            <featureBranchPrefix>dev/feature-</featureBranchPrefix>
-                            <releaseBranchPrefix>dev/release-</releaseBranchPrefix>
-                            <hotfixBranchPrefix>dev/hotfix-</hotfixBranchPrefix>
-                            <versionTagPrefix>v</versionTagPrefix>
-                        </flowInitContext>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <enableSshAgent>true</enableSshAgent>
-                        <pushReleases>true</pushReleases>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -281,6 +263,24 @@
                         <version>${framework-libraries.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>${jgitflow-maven-plugin.version}</version>
+                <configuration>
+                    <flowInitContext>
+                        <masterBranchName>dev/release</masterBranchName>
+                        <developBranchName>${jgitflow.maven.developBranchName}</developBranchName>
+                        <featureBranchPrefix>dev/feature-</featureBranchPrefix>
+                        <releaseBranchPrefix>dev/release-</releaseBranchPrefix>
+                        <hotfixBranchPrefix>dev/hotfix-</hotfixBranchPrefix>
+                        <versionTagPrefix>v</versionTagPrefix>
+                    </flowInitContext>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <enableSshAgent>true</enableSshAgent>
+                    <pushReleases>true</pushReleases>
+                </configuration>
             </plugin>
         </plugins>
 

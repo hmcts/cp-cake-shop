@@ -19,7 +19,7 @@ resources:
       type: github
       name: hmcts/cpp-azure-devops-templates
       endpoint: 'hmcts'
-      ref: 'skip-cake-repo'
+      ref: 'main'
 
 pool:
   name: "MDV-ADO-AGENT-AKS-01"

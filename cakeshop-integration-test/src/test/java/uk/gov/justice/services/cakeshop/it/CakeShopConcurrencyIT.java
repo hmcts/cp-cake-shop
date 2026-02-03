@@ -130,5 +130,6 @@ public class CakeShopConcurrencyIT {
         );
         databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
         databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
     }
 }

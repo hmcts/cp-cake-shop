@@ -57,6 +57,7 @@ public class CakeShopEventBufferingIT {
                 "recipe",
                 "ingredient",
                 "processed_event");
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
     }
 
     @AfterEach

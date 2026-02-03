@@ -76,6 +76,7 @@ public class CakeShopIT {
         commandSender = new CommandSender(client, eventFactory);
 
         databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(
                 CONTEXT_NAME,
                 "stream_buffer",

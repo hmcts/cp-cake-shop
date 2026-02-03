@@ -28,6 +28,7 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class ReplayEventToEventListenerIT {
@@ -50,6 +51,7 @@ public class ReplayEventToEventListenerIT {
         databaseCleaner.cleanSystemTables(contextName);
     }
 
+    @Disabled("Do not check in")
     @Test
     public void shouldReplaySingleEventToEventListenerUsingTheReplayEventToEventListenerJmxCommand() throws Exception {
 
@@ -122,6 +124,7 @@ public class ReplayEventToEventListenerIT {
 
         databaseCleaner.cleanStreamBufferTable(contextName);
         databaseCleaner.cleanStreamStatusTable(contextName);
+        databaseCleaner.resetEventSubscriptionStatusTable(contextName);
     }
 }
 

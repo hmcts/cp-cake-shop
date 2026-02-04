@@ -56,60 +56,60 @@ public class CatchupPerformanceIT {
         databaseCleaner.cleanSystemTables(CONTEXT_NAME);
     }
 
-//    @Test
-//    public void shouldReplayAndFindRecipesInViewStore() throws Exception {
-//
-//        final int numberOfStreams = 10;
-//        final int numberOfEventsPerStream = 100;
-//        final int totalEvents = numberOfStreams * numberOfEventsPerStream;
-//
-//        System.out.println(format(
-//                "Inserting %d events into event_log (%d events in %d streams)",
-//                totalEvents,
-//                numberOfEventsPerStream,
-//                numberOfStreams
-//        ));
-//
-//        addEventsToEventLog(numberOfStreams, numberOfEventsPerStream);
-//
-//        System.out.println("Inserted " + totalEvents + " events into event_log");
-//        System.out.println("Waiting for events to publish...");
-//
-//        final Optional<Integer> processedEventCount = longPoller.pollUntilFound(() -> {
-//            final int eventCount = processedEventCounter.countProcessedEventsForEventListener();
-//            System.out.printf("Polling processed_event table. Expected events count: %d, found: %d\n", totalEvents, eventCount);
-//            if (eventCount == totalEvents) {
-//                return of(eventCount);
-//            }
-//
-//            return empty();
-//        });
-//
-//        assertThat(processedEventCount, is(of(totalEvents)));
-//
-//
-//        cleanViewstoreTables();
-//
-//        System.out.println("Running catchup...");
-//        runCatchup();
-//
-//        final Optional<Integer> numberOfReplayedEvents = longPoller.pollUntilFound(() -> {
-//            final int eventCount = processedEventCounter.countProcessedEventsForEventListener();
-//            System.out.printf("Polling processed_event table. Expected events count: %d, found: %d\n", totalEvents, eventCount);
-//
-//            if (eventCount == totalEvents) {
-//                return of(eventCount);
-//            }
-//
-//            return empty();
-//        });
-//
-//        if (numberOfReplayedEvents.isPresent()) {
-//            System.out.println("Successfully caught up " + numberOfReplayedEvents.get() + " events");
-//        } else {
-//            fail("Failed to catchup " + totalEvents + " events.");
-//        }
-//    }
+    @Test
+    public void shouldReplayAndFindRecipesInViewStore() throws Exception {
+
+        final int numberOfStreams = 10;
+        final int numberOfEventsPerStream = 100;
+        final int totalEvents = numberOfStreams * numberOfEventsPerStream;
+
+        System.out.println(format(
+                "Inserting %d events into event_log (%d events in %d streams)",
+                totalEvents,
+                numberOfEventsPerStream,
+                numberOfStreams
+        ));
+
+        addEventsToEventLog(numberOfStreams, numberOfEventsPerStream);
+
+        System.out.println("Inserted " + totalEvents + " events into event_log");
+        System.out.println("Waiting for events to publish...");
+
+        final Optional<Integer> processedEventCount = longPoller.pollUntilFound(() -> {
+            final int eventCount = processedEventCounter.countProcessedEventsForEventListener();
+            System.out.printf("Polling processed_event table. Expected events count: %d, found: %d\n", totalEvents, eventCount);
+            if (eventCount == totalEvents) {
+                return of(eventCount);
+            }
+
+            return empty();
+        });
+
+        assertThat(processedEventCount, is(of(totalEvents)));
+
+
+        cleanViewstoreTables();
+
+        System.out.println("Running catchup...");
+        runCatchup();
+
+        final Optional<Integer> numberOfReplayedEvents = longPoller.pollUntilFound(() -> {
+            final int eventCount = processedEventCounter.countProcessedEventsForEventListener();
+            System.out.printf("Polling processed_event table. Expected events count: %d, found: %d\n", totalEvents, eventCount);
+
+            if (eventCount == totalEvents) {
+                return of(eventCount);
+            }
+
+            return empty();
+        });
+
+        if (numberOfReplayedEvents.isPresent()) {
+            System.out.println("Successfully caught up " + numberOfReplayedEvents.get() + " events");
+        } else {
+            fail("Failed to catchup " + totalEvents + " events.");
+        }
+    }
 
     private void addEventsToEventLog(final int numberOfStreams, final int numberOfEventsPerStream) throws Exception {
 

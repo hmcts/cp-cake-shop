@@ -46,6 +46,7 @@ public class RestResourcesIT {
         client = new RestEasyClientFactory().createResteasyClient();
 
         databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(
                 CONTEXT_NAME,
                 "stream_buffer",

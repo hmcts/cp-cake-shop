@@ -38,6 +38,7 @@ public class UnifiedSearchIndexerIT {
     @BeforeEach
     public void before() throws Exception {
         databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
         cleanViewstoreTables();
     }
 

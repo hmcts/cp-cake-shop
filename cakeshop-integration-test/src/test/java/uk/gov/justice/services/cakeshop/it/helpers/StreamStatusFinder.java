@@ -1,5 +1,7 @@
 package uk.gov.justice.services.cakeshop.it.helpers;
 
+import uk.gov.justice.services.common.converter.ZonedDateTimes;
+
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
@@ -7,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,8 +28,14 @@ public class StreamStatusFinder {
         final String SELECT_SQL = """
                     SELECT
                     stream_id,
+                    position, 
+                    source,
+                    component,
                     stream_error_id,
-                    stream_error_position
+                    stream_error_position, 
+                    updated_at, 
+                    latest_known_position, 
+                    is_up_to_date
                 FROM stream_status
                 WHERE stream_id = ?
                 AND source = ?
@@ -42,9 +51,14 @@ public class StreamStatusFinder {
                 if (resultSet.next()) {
                     final StreamStatus streamStatus = new StreamStatus(
                             (UUID) resultSet.getObject("stream_id"),
+                            resultSet.getLong("position"),
+                            resultSet.getString("source"),
+                            resultSet.getString("component"),
                             (UUID) resultSet.getObject("stream_error_id"),
-                            resultSet.getLong("stream_error_position")
-                    );
+                            resultSet.getLong("stream_error_position"),
+                            ZonedDateTimes.fromSqlTimestamp(resultSet.getTimestamp("updated_at")),
+                            resultSet.getLong("latest_known_position"),
+                            resultSet.getBoolean("is_up_to_date"));
 
                     return of(streamStatus);
                 }
@@ -56,7 +70,7 @@ public class StreamStatusFinder {
         return empty();
     }
 
-    public record StreamStatus(UUID streamId, UUID streamErrorId, Long streamErrorPosition) {
+    public record StreamStatus(UUID streamId, long position, String source, String component, UUID streamErrorId, Long streamErrorPosition, ZonedDateTime updatedAt, long latestKnownPosition, boolean isUpToDate) {
 
     }
 }

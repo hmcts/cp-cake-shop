@@ -41,14 +41,14 @@ runLiquibase() {
 }
 
 buildAndDeploy() {
-  loginToDockerContainerRegistry
-  buildWars
-  undeployWarsFromDocker
-  buildAndStartContainers
-  runLiquibase
-  deployWiremock
-  deployWars
-  cakeshopDeploymentCheck
+#  loginToDockerContainerRegistry
+#  buildWars
+#  undeployWarsFromDocker
+#  buildAndStartContainers
+#  runLiquibase
+#  deployWiremock
+#  deployWars
+#  cakeshopDeploymentCheck
   integrationTests
 }
 

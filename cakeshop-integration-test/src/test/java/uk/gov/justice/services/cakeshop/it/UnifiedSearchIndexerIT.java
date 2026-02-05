@@ -73,6 +73,7 @@ public class UnifiedSearchIndexerIT {
     }
 
     private void cleanViewstoreTables() {
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
                 "ingredient",
                 "recipe",

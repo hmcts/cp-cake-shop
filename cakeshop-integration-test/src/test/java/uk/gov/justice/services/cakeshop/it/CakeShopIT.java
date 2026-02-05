@@ -88,6 +88,7 @@ public class CakeShopIT {
                 "recipe",
                 "ingredient",
                 "processed_event");
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
     }
 
     @AfterEach

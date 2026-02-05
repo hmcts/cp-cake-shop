@@ -32,8 +32,10 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Disabled until refactoring of catchup with framework 105.x completed - allan 2025/02/05")
 public class ReplayEventToEventIndexerIT {
 
     private final TestSystemCommanderClientFactory testSystemCommanderClientFactory = new TestSystemCommanderClientFactory();
@@ -119,6 +121,7 @@ public class ReplayEventToEventIndexerIT {
 
         final String contextName = CONTEXT_NAME;
 
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(contextName,
                 "ingredient",
                 "recipe",

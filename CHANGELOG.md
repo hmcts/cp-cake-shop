@@ -5,6 +5,11 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 ## [Unreleased]
 ### Changed
+- Updated to framework 17.105.x
+- IT tests now run using the new pull mechanism in the framework
+
+## [17.104.0] - 2025-12-16
+### Changed
 - Integration tests now run against a standalone wildfly docker instance rather than using the maven-wildfly-plugin
 - Integration tests no longer run as part of the default build.
 - `runIntegrationTests.sh` script now deploys cake-shop into wildfly and runs the integration tests

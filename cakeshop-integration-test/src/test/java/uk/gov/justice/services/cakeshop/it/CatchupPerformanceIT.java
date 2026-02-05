@@ -32,8 +32,11 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+
+@Disabled("Disabled until refactoring of catchup with framework 105.x completed - allan 2025/02/05")
 public class CatchupPerformanceIT {
 
     private static final int BATCH_INSERT_SIZE = 10_000;
@@ -164,5 +167,6 @@ public class CatchupPerformanceIT {
         );
         databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
         databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
     }
 }

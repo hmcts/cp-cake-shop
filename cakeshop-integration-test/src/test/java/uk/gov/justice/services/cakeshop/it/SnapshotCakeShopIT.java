@@ -18,11 +18,13 @@ import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
 import uk.gov.justice.services.core.aggregate.exception.AggregateChangeDetectedException;
 import uk.gov.justice.services.eventsourcing.jdbc.snapshot.SnapshotJdbcRepository;
 import uk.gov.justice.services.eventsourcing.jdbc.snapshot.StandaloneSnapshotJdbcRepositoryFactory;
+import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import static com.jayway.jsonassert.JsonAssert.with;
 import static java.util.UUID.randomUUID;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 import static uk.gov.justice.services.test.utils.core.reflection.ReflectionUtil.setField;
 
 public class SnapshotCakeShopIT {
@@ -30,6 +32,7 @@ public class SnapshotCakeShopIT {
     private final DataSource eventStoreDataSource = new DatabaseManager().initEventStoreDb();
     private final SnapshotJdbcRepository snapshotJdbcRepository = new StandaloneSnapshotJdbcRepositoryFactory().getSnapshotJdbcRepository(eventStoreDataSource);
     private final EventFactory eventFactory = new EventFactory();
+    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
 
     private Client client;
     private Querier querier;
@@ -37,6 +40,10 @@ public class SnapshotCakeShopIT {
 
     @BeforeEach
     public void before() throws Exception {
+
+        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
+        cleanViewstoreTables();
+
         client = new RestEasyClientFactory().createResteasyClient();
         querier = new Querier(client);
         commandSender = new CommandSender(client, eventFactory);
@@ -90,5 +97,18 @@ public class SnapshotCakeShopIT {
 
     private Optional<AggregateSnapshot<Recipe>> recipeAggregateSnapshotOf(final String recipeId) {
         return snapshotJdbcRepository.getLatestSnapshot(UUID.fromString(recipeId), Recipe.class);
+    }
+
+    private void cleanViewstoreTables() {
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
+        databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
+                "ingredient",
+                "recipe",
+                "cake",
+                "cake_order",
+                "processed_event"
+        );
+        databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
+        databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
     }
 }

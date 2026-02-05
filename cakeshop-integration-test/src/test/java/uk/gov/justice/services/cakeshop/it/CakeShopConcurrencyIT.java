@@ -121,6 +121,7 @@ public class CakeShopConcurrencyIT {
     }
 
     private void cleanViewstoreTables() {
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
                 "ingredient",
                 "recipe",
@@ -130,5 +131,6 @@ public class CakeShopConcurrencyIT {
         );
         databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
         databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
     }
 }

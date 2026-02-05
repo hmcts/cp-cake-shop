@@ -67,6 +67,7 @@ public class SuspendIT {
 
         databaseCleaner.cleanSystemTables(CONTEXT_NAME);
         databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
                 "cake",
                 "cake_order",

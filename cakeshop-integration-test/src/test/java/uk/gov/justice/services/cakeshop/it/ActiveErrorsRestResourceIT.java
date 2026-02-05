@@ -24,6 +24,7 @@ import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.ACTIVE_STR
 
 public class ActiveErrorsRestResourceIT {
 
+    protected static final String CONTEXT_NAME = "cakeshop";
     private final DataSource viewStoreDataSource = new DatabaseManager().initViewStoreDb();
     private final TestDataManager testDataManager = new TestDataManager(viewStoreDataSource);
     final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
@@ -34,9 +35,10 @@ public class ActiveErrorsRestResourceIT {
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
 
-        databaseCleaner.cleanEventStoreTables("cakeshop");
+        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(
-                "cakeshop",
+                CONTEXT_NAME,
                 "stream_buffer",
                 "stream_status",
                 "stream_error_hash",

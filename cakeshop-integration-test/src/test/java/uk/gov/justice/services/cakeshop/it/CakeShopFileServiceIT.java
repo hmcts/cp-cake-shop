@@ -47,6 +47,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CakeShopFileServiceIT {
 
@@ -72,6 +73,7 @@ public class CakeShopFileServiceIT {
         client.close();
     }
 
+    @Test
     public void shouldReturnAcceptedStatusAndCreatEventWhenPostingPhotographToMultipartEndpoint() throws Exception {
 
         final String recipeId = randomUUID().toString();

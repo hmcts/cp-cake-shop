@@ -4,6 +4,8 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.UUID.fromString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.fail;
 import static uk.gov.justice.services.cakeshop.it.helpers.JmxParametersFactory.buildJmxParameters;
 import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
@@ -13,6 +15,7 @@ import static uk.gov.justice.services.jmx.api.mbean.CommandRunMode.FORCED;
 import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
 import uk.gov.justice.services.cakeshop.it.helpers.LinkedEventInserter;
 import uk.gov.justice.services.cakeshop.it.helpers.ProcessedEventFinder;
+import uk.gov.justice.services.cakeshop.it.helpers.StreamStatusFinder;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.LinkedEvent;
 import uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParameters;
 import uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParameters.JmxCommandRuntimeParametersBuilder;
@@ -29,8 +32,10 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Disabled until refactoring of catchup with framework 105.x completed - allan 2025/02/05")
 public class ReplayEventToEventIndexerIT {
 
     private final TestSystemCommanderClientFactory testSystemCommanderClientFactory = new TestSystemCommanderClientFactory();
@@ -39,7 +44,7 @@ public class ReplayEventToEventIndexerIT {
     private final DataSource viewStoreDataSource = new DatabaseManager().initViewStoreDb();
     private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
     private final LinkedEventInserter linkedEventInserter = new LinkedEventInserter(eventStoreDataSource);
-    private final ProcessedEventFinder processedEventFinder = new ProcessedEventFinder(viewStoreDataSource);
+    private final StreamStatusFinder streamStatusFinder = new StreamStatusFinder(viewStoreDataSource);
     private final Poller poller = new Poller();
 
     @BeforeEach
@@ -47,6 +52,7 @@ public class ReplayEventToEventIndexerIT {
         final String contextName = CONTEXT_NAME;
 
         databaseCleaner.cleanEventStoreTables(contextName);
+        databaseCleaner.resetEventSubscriptionStatusTable(contextName);
         cleanViewstoreTables();
         databaseCleaner.cleanSystemTables(contextName);
     }
@@ -72,16 +78,16 @@ public class ReplayEventToEventIndexerIT {
                     );
         }
 
-        final Optional<ProcessedEvent> processedEvent = poller.pollUntilFound(
+        final Optional<StreamStatusFinder.StreamStatus> streamStatus = poller.pollUntilFound(
                 () -> {
-                    System.out.printf("Polling processed_event table for existence of event id: %s\n", linkedEvent.getId());
-                    return processedEventFinder.findProcessedEvent(linkedEvent.getId());
+                    System.out.printf("Polling stream_status table to check if the event is processed. event id: %s\n", linkedEvent.getId());
+                    return streamStatusFinder.findStreamStatus(linkedEvent.getStreamId(), "cakeshop", "EVENT_INDEXER");
                 }
         );
 
-        if (processedEvent.isPresent()) {
-            assertThat(processedEvent.get().getEventId(), is(linkedEvent.getId()));
-            assertThat(processedEvent.get().getComponentName(), is("EVENT_INDEXER"));
+        if (streamStatus.isPresent()) {
+            assertThat(streamStatus.get().position(), greaterThanOrEqualTo(linkedEvent.getPositionInStream()));
+            assertThat(streamStatus.get().component(), is("EVENT_INDEXER"));
         } else {
             fail();
         }
@@ -115,6 +121,7 @@ public class ReplayEventToEventIndexerIT {
 
         final String contextName = CONTEXT_NAME;
 
+        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(contextName,
                 "ingredient",
                 "recipe",

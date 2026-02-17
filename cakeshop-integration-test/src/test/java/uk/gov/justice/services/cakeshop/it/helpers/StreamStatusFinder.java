@@ -4,6 +4,7 @@ import uk.gov.justice.services.common.converter.ZonedDateTimes;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static uk.gov.justice.services.common.converter.ZonedDateTimes.fromSqlTimestamp;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,13 +29,13 @@ public class StreamStatusFinder {
         final String SELECT_SQL = """
                     SELECT
                     stream_id,
-                    position, 
+                    position,
                     source,
                     component,
                     stream_error_id,
-                    stream_error_position, 
-                    updated_at, 
-                    latest_known_position, 
+                    stream_error_position,
+                    discovered_at,
+                    latest_known_position,
                     is_up_to_date
                 FROM stream_status
                 WHERE stream_id = ?
@@ -56,7 +57,7 @@ public class StreamStatusFinder {
                             resultSet.getString("component"),
                             (UUID) resultSet.getObject("stream_error_id"),
                             resultSet.getLong("stream_error_position"),
-                            ZonedDateTimes.fromSqlTimestamp(resultSet.getTimestamp("updated_at")),
+                            fromSqlTimestamp(resultSet.getTimestamp("discovered_at")),
                             resultSet.getLong("latest_known_position"),
                             resultSet.getBoolean("is_up_to_date"));
 

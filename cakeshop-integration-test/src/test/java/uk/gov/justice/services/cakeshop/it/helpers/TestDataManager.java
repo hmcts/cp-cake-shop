@@ -6,11 +6,12 @@ import static java.util.Optional.ofNullable;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.RECIPES_RESOURCE_URI;
+import static uk.gov.justice.services.common.converter.ZonedDateTimes.fromSqlTimestamp;
 
 import uk.gov.justice.services.common.converter.ZonedDateTimes;
 import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamError;
-import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorDetails;
 import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorHash;
+import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorOccurrence;
 import uk.gov.justice.services.test.utils.core.messaging.Poller;
 
 import java.sql.Connection;
@@ -63,20 +64,20 @@ public class TestDataManager {
 
     private Optional<StreamError> findEventListenerStreamError(final String eventName) {
 
-        final Optional<StreamErrorDetails> streamErrorDetails = findStreamErrorDetails(eventName);
+        final Optional<StreamErrorOccurrence> streamErrorOccurrence = findStreamError(eventName);
 
-        if (streamErrorDetails.isPresent()) {
-            final Optional<StreamErrorHash> streamErrorHash = findStreamErrorHash(streamErrorDetails.get().hash());
+        if (streamErrorOccurrence.isPresent()) {
+            final Optional<StreamErrorHash> streamErrorHash = findStreamErrorHash(streamErrorOccurrence.get().hash());
 
             if (streamErrorHash.isPresent()) {
-                return of(new StreamError(streamErrorDetails.get(), streamErrorHash.get()));
+                return of(new StreamError(streamErrorOccurrence.get(), streamErrorHash.get()));
             }
         }
 
         return empty();
     }
 
-    private Optional<StreamErrorDetails> findStreamErrorDetails(final String eventName) {
+    private Optional<StreamErrorOccurrence> findStreamError(final String eventName) {
         final String SELECT_SQL = """
                     SELECT
                     id,
@@ -89,7 +90,8 @@ public class TestDataManager {
                     date_created,
                     full_stack_trace,
                     component,
-                    source
+                    source,
+                    occurred_at
                 FROM stream_error
                 WHERE event_name = ? AND component = 'EVENT_LISTENER'""";
 
@@ -106,12 +108,13 @@ public class TestDataManager {
                     final UUID eventId = (UUID) resultSet.getObject("event_id");
                     final UUID streamId = (UUID) resultSet.getObject("stream_id");
                     final Long positionInStream = resultSet.getLong("position_in_stream");
-                    final ZonedDateTime dateCreated = ZonedDateTimes.fromSqlTimestamp(resultSet.getTimestamp("date_created"));
+                    final ZonedDateTime dateCreated = fromSqlTimestamp(resultSet.getTimestamp("date_created"));
                     final String stackTrace = resultSet.getString("full_stack_trace");
                     final String componentName = resultSet.getString("component");
                     final String source = resultSet.getString("source");
+                    final ZonedDateTime occurredAt = fromSqlTimestamp(resultSet.getTimestamp("occurred_at"));
 
-                    final StreamErrorDetails streamError = new StreamErrorDetails(
+                    final StreamErrorOccurrence streamError = new StreamErrorOccurrence(
                             id,
                             hash,
                             exceptionMessage,
@@ -123,7 +126,8 @@ public class TestDataManager {
                             dateCreated,
                             stackTrace,
                             componentName,
-                            source
+                            source,
+                            occurredAt
                     );
 
                     return of(streamError);

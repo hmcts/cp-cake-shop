@@ -7,6 +7,7 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 ### Changed
 - Updated to framework 17.105.x
 - IT tests now run using the new pull mechanism in the framework
+- Pull mechanism now has retries for failed events
 
 ## [17.104.0] - 2025-12-16
 ### Changed

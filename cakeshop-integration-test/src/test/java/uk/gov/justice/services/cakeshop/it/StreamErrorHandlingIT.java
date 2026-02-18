@@ -1,21 +1,5 @@
 package uk.gov.justice.services.cakeshop.it;
 
-import java.util.Optional;
-import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
-import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
-import uk.gov.justice.services.cakeshop.it.helpers.StreamStatusFinder;
-import uk.gov.justice.services.cakeshop.it.helpers.TestDataManager;
-import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamError;
-import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorDetails;
-import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorHash;
-import uk.gov.justice.services.test.utils.core.messaging.Poller;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
-
 import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -23,6 +7,25 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
+
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
+import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
+import uk.gov.justice.services.cakeshop.it.helpers.StreamStatusFinder;
+import uk.gov.justice.services.cakeshop.it.helpers.TestDataManager;
+import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamError;
+import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorHash;
+import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorOccurrence;
+import uk.gov.justice.services.test.utils.core.messaging.Poller;
+import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
+
+import java.util.Optional;
+
+import javax.sql.DataSource;
+import javax.ws.rs.client.Client;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class StreamErrorHandlingIT {
 
@@ -68,7 +71,7 @@ public class StreamErrorHandlingIT {
 
         if (streamErrorOptional.isPresent()) {
             final StreamError streamError = streamErrorOptional.get();
-            final StreamErrorDetails streamErrorDetails = streamError.streamErrorDetails();
+            final StreamErrorOccurrence streamErrorDetails = streamError.streamErrorOccurrence();
             final StreamErrorHash streamErrorHash = streamError.streamErrorHash();
 
             assertThat(streamErrorHash.exceptionClassName(), is("javax.persistence.PersistenceException"));

@@ -1,6 +1,10 @@
 package uk.gov.justice.services.cakeshop.it;
 
 import static com.jayway.jsonpath.JsonPath.read;
+import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.Optional.of;
 import static java.util.UUID.randomUUID;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -9,6 +13,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.LENIENT;
 import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
+import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.EVENT_DISCOVERY_URI;
+import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.EVENT_RESOURCE_URI_TEMPLATE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BASE_URI;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BY_ERROR_HASH_URI_TEMPLATE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BY_HAS_ERROR;
@@ -17,12 +23,28 @@ import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERR
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BY_ERROR_ID_URI_TEMPLATE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BY_STREAM_ID_URI_TEMPLATE;
 
+import javax.json.JsonValue;
 import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
+import uk.gov.justice.services.cakeshop.it.helpers.LinkedEventInserter;
 import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
 import uk.gov.justice.services.cakeshop.it.helpers.TestDataManager;
+import uk.gov.justice.services.common.converter.jackson.ObjectMapperProducer;
 import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamError;
+import uk.gov.justice.services.eventsourcing.discovery.DiscoveryResult;
+import uk.gov.justice.services.eventsourcing.repository.jdbc.discovery.StreamPosition;
+import uk.gov.justice.services.eventsourcing.repository.jdbc.event.LinkedEvent;
+import uk.gov.justice.services.messaging.DefaultJsonObjectEnvelopeConverter;
+import uk.gov.justice.services.messaging.JsonEnvelope;
+import uk.gov.justice.services.messaging.Metadata;
+import uk.gov.justice.services.messaging.spi.DefaultJsonEnvelope;
+import uk.gov.justice.services.test.utils.core.reflection.ReflectionUtil;
 import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,14 +61,21 @@ import org.junit.jupiter.api.Test;
 public class RestResourcesIT {
 
     private final DataSource viewStoreDataSource = new DatabaseManager().initViewStoreDb();
+    private final DataSource eventStoreDataSource = new DatabaseManager().initEventStoreDb();
     private final TestDataManager testDataManager = new TestDataManager(viewStoreDataSource);
+    private final LinkedEventInserter linkedEventInserter = new LinkedEventInserter(eventStoreDataSource);
     final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
+    private final ObjectMapper objectMapper = new ObjectMapperProducer().objectMapper();
+
+    private DefaultJsonObjectEnvelopeConverter jsonObjectEnvelopeConverter;
 
     private Client client;
 
     @BeforeEach
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
+        jsonObjectEnvelopeConverter = new DefaultJsonObjectEnvelopeConverter();
+        ReflectionUtil.setField(jsonObjectEnvelopeConverter, "objectMapper", objectMapper);
 
         databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
         databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
@@ -206,6 +235,158 @@ public class RestResourcesIT {
                 var actualResponse = response.readEntity(String.class);
                 String errorMessage = read(actualResponse, "$.errorMessage");
                 assertThat(errorMessage, containsString("Please set either 'streamId' or 'errorId' as request parameters, not both"));
+            }
+        }
+    }
+
+    @Nested
+    class EventDiscoveryResourceIT {
+
+        @Test
+        public void shouldReturnEmptyDiscoveryResultWhenNoEventsPresent() throws JsonProcessingException {
+            final Invocation.Builder request = client.target(EVENT_DISCOVERY_URI + "?batchSize=10").request();
+            try (final Response response = request.get()) {
+                assertThat(response.getStatus(), is(200));
+                final DiscoveryResult discoveryResult = objectMapper.readValue(response.readEntity(String.class), DiscoveryResult.class);
+                assertThat(discoveryResult.streamPositions(), is(emptyList()));
+                assertThat(discoveryResult.latestKnownEventId(), is(Optional.empty()));
+            }
+        }
+
+        @Test
+        public void shouldDiscoverEventsByCriteria() throws JsonProcessingException {
+            final UUID event1Id = randomUUID();
+            final UUID stream1Id = randomUUID();
+            final UUID event2Id = randomUUID();
+            final UUID stream2Id = randomUUID();
+
+            linkedEventInserter.insert(new LinkedEvent(
+                    event1Id,
+                    stream1Id,
+                    1L,
+                    "cakeshop.events.recipe-added",
+                    "{\"id\":\"" + event1Id + "\",\"name\":\"cakeshop.events.recipe-added\",\"stream\":{\"id\":\"" + stream1Id + "\",\"version\":1},\"source\":\"cakeshop\",\"createdAt\":\"2024-01-01T00:00:00.0Z\"}",
+                    "{\"recipeId\":\"" + stream1Id + "\"}",
+                    ZonedDateTime.now(UTC),
+                    1L,
+                    0L
+            ));
+            linkedEventInserter.insert(new LinkedEvent(
+                    event2Id,
+                    stream2Id,
+                    1L,
+                    "cakeshop.events.recipe-added",
+                    "{\"id\":\"" + event2Id + "\",\"name\":\"cakeshop.events.recipe-added\",\"stream\":{\"id\":\"" + stream2Id + "\",\"version\":1},\"source\":\"cakeshop\",\"createdAt\":\"2024-01-01T00:00:00.0Z\"}",
+                    "{\"recipeId\":\"" + stream2Id + "\"}",
+                    ZonedDateTime.now(UTC),
+                    2L,
+                    1L
+            ));
+
+            final Invocation.Builder allEventsRequest = client.target(EVENT_DISCOVERY_URI + "?batchSize=10").request();
+            try (final Response response = allEventsRequest.get()) {
+                assertThat(response.getStatus(), is(200));
+                final DiscoveryResult discoveryResult = objectMapper.readValue(response.readEntity(String.class), DiscoveryResult.class);
+                final List<UUID> streamIds = discoveryResult.streamPositions().stream()
+                        .map(StreamPosition::streamId)
+                        .toList();
+                assertThat(streamIds, is(List.of(stream1Id, stream2Id)));
+                assertThat(discoveryResult.latestKnownEventId(), is(of(event2Id)));
+            }
+
+            final Invocation.Builder afterEvent1Request = client.target(EVENT_DISCOVERY_URI + "?afterEventId=" + event1Id + "&batchSize=10").request();
+            try (final Response response = afterEvent1Request.get()) {
+                assertThat(response.getStatus(), is(200));
+                final DiscoveryResult discoveryResult = objectMapper.readValue(response.readEntity(String.class), DiscoveryResult.class);
+                final List<UUID> streamIds = discoveryResult.streamPositions().stream()
+                        .map(StreamPosition::streamId)
+                        .toList();
+                assertThat(streamIds, is(singletonList(stream2Id)));
+                assertThat(discoveryResult.latestKnownEventId(), is(of(event2Id)));
+            }
+        }
+    }
+
+    @Nested
+    class EventResourceIT {
+
+        @Test
+        public void shouldReturnNextEventAfterPosition() throws JsonProcessingException {
+            final UUID eventId = randomUUID();
+            final UUID streamId = randomUUID();
+            final String eventName = "cakeshop.events.recipe-added";
+            final String metadata = """
+                    {
+                      "id": "%s",
+                      "name": "%s",
+                      "stream": {
+                        "id": "%s",
+                        "version": 1
+                      },
+                      "source": "cakeshop",
+                      "createdAt": "2024-01-01T00:00:00.0Z"
+                    }
+                    """.formatted(eventId, eventName, streamId);
+            final String payload = """
+                    {
+                        "recipeId" : "%s"
+                    }
+                    """.formatted(streamId);
+            linkedEventInserter.insert(new LinkedEvent(
+                    eventId,
+                    streamId,
+                    1L,
+                    eventName,
+                    metadata,
+                    payload,
+                    ZonedDateTime.now(UTC),
+                    1L,
+                    0L
+            ));
+
+            final Invocation.Builder request = client.target(EVENT_RESOURCE_URI_TEMPLATE.formatted(streamId) + "?afterPosition=0").request();
+            try (final Response response = request.get()) {
+                assertThat(response.getStatus(), is(200));
+
+                JsonEnvelope jsonEnvelope = jsonObjectEnvelopeConverter.asEnvelope(response.readEntity(String.class));
+                Metadata metadataFromResponse = jsonEnvelope.metadata();
+                assertThat(metadataFromResponse.id(), is(eventId));
+                assertThat(metadataFromResponse.name(), is(eventName));
+                assertThat(metadataFromResponse.streamId().get(), is(streamId));
+                assertThat(metadataFromResponse.source().get(), is("cakeshop"));
+                assertThat(read(jsonEnvelope.payload().toString(), "$.recipeId"), is(streamId.toString()));
+            }
+        }
+
+        @Test
+        public void shouldReturn204WhenNoMoreEventsAfterPosition() {
+            final UUID eventId = randomUUID();
+            final UUID streamId = randomUUID();
+
+            linkedEventInserter.insert(new LinkedEvent(
+                    eventId,
+                    streamId,
+                    1L,
+                    "cakeshop.events.recipe-added",
+                    "{\"id\":\"" + eventId + "\",\"name\":\"cakeshop.events.recipe-added\",\"stream\":{\"id\":\"" + streamId + "\",\"version\":1},\"source\":\"cakeshop\",\"createdAt\":\"2024-01-01T00:00:00.0Z\"}",
+                    "{\"recipeId\":\"" + streamId + "\"}",
+                    ZonedDateTime.now(UTC),
+                    1L,
+                    0L
+            ));
+
+            final Invocation.Builder request = client.target(EVENT_RESOURCE_URI_TEMPLATE.formatted(streamId) + "?afterPosition=1").request();
+            try (final Response response = request.get()) {
+                assertThat(response.getStatus(), is(204));
+            }
+        }
+
+        @Test
+        public void shouldReturn204WhenStreamDoesNotExist() {
+            final UUID nonExistentStreamId = randomUUID();
+            final Invocation.Builder request = client.target(EVENT_RESOURCE_URI_TEMPLATE.formatted(nonExistentStreamId) + "?afterPosition=0").request();
+            try (final Response response = request.get()) {
+                assertThat(response.getStatus(), is(204));
             }
         }
     }

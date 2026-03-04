@@ -27,7 +27,6 @@ source $CPP_DOCKER_DIR/build-scripts/integration-test-scipt-functions.sh
 
 source ${CPP_DOCKER_DIR}/build-scripts/download-liquibase-jar-functions.sh
 
-
 runLiquibase() {
   runEventLogLiquibase
   runEventLogAggregateSnapshotLiquibase

@@ -50,6 +50,7 @@ public class StreamErrorHandlingIT {
                 "stream_status",
                 "stream_error_hash",
                 "stream_error",
+                "stream_error_retry",
                 "cake",
                 "cake_order",
                 "recipe",

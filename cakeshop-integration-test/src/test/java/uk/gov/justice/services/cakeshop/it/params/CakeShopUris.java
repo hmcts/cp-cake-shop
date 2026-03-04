@@ -5,7 +5,7 @@ import static uk.gov.justice.services.cakeshop.it.helpers.SystemPropertyFinder.f
 import uk.gov.justice.services.cakeshop.it.helpers.SystemPropertyFinder;
 
 public class CakeShopUris {
-    private static final String HOST = "http://localhost:" + findWildflyHttpPort();
+    public static final String HOST = "http://localhost:" + findWildflyHttpPort();
 
     public static final String RECIPES_RESOURCE_URI = HOST + "/cakeshop-command-api/command/api/rest/cakeshop/recipes/";
     public static final String ORDERS_RESOURCE_URI = HOST + "/cakeshop-command-api/command/api/rest/cakeshop/orders/";

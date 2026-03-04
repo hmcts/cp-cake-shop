@@ -27,4 +27,7 @@ public class CakeShopUris {
     public static final String CAKES_RESOURCE_URI_FORMAT = RECIPES_RESOURCE_URI + "%s/cakes/%s";
 
     public static final String ACTIVE_STREAM_ERRORS_QUERY_BASE_URI = HOST + "/cakeshop-service/internal/errors/active-summary";
+
+    public static final String EVENT_DISCOVERY_URI = HOST + "/cakeshop-service/rest/events-discovery";
+    public static final String EVENT_RESOURCE_URI_TEMPLATE = HOST + "/cakeshop-service/rest/event/%s";
 }

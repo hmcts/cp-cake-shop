@@ -60,8 +60,6 @@ public class TestDataManager {
         return poller.pollUntilFound(() -> findEventListenerStreamError(eventName));
     }
 
-
-
     private Optional<StreamError> findEventListenerStreamError(final String eventName) {
 
         final Optional<StreamErrorOccurrence> streamErrorOccurrence = findStreamError(eventName);

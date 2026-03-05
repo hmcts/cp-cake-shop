@@ -2,5 +2,5 @@ event_sources:
 - name: private.event.source
   location:
     jms_uri:  jms:topic:other.event
-    rest_uri: http://localhost:8080/cakeshop/event-source-api/rest
+    rest_uri: http://localhost:8080/cakeshop-service/rest
     data_source: java:/app/cakeshop-service/DS.eventstore

@@ -4,7 +4,6 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.UUID.fromString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.fail;
 import static uk.gov.justice.services.cakeshop.it.helpers.JmxParametersFactory.buildJmxParameters;
@@ -14,16 +13,13 @@ import static uk.gov.justice.services.jmx.api.mbean.CommandRunMode.FORCED;
 
 import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
 import uk.gov.justice.services.cakeshop.it.helpers.LinkedEventInserter;
-import uk.gov.justice.services.cakeshop.it.helpers.ProcessedEventFinder;
 import uk.gov.justice.services.cakeshop.it.helpers.StreamStatusFinder;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.LinkedEvent;
 import uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParameters;
 import uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParameters.JmxCommandRuntimeParametersBuilder;
 import uk.gov.justice.services.jmx.system.command.client.SystemCommanderClient;
 import uk.gov.justice.services.jmx.system.command.client.TestSystemCommanderClientFactory;
-import uk.gov.justice.services.subscription.ProcessedEvent;
 import uk.gov.justice.services.test.utils.core.messaging.Poller;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -31,31 +27,22 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
 
 @Disabled("Disabled until refactoring of catchup with framework 105.x completed - allan 2025/02/05")
+@ExtendWith(DatabaseResetExtension.class)
 public class ReplayEventToEventIndexerIT {
 
     private final TestSystemCommanderClientFactory testSystemCommanderClientFactory = new TestSystemCommanderClientFactory();
 
     private final DataSource eventStoreDataSource = new DatabaseManager().initEventStoreDb();
     private final DataSource viewStoreDataSource = new DatabaseManager().initViewStoreDb();
-    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
     private final LinkedEventInserter linkedEventInserter = new LinkedEventInserter(eventStoreDataSource);
     private final StreamStatusFinder streamStatusFinder = new StreamStatusFinder(viewStoreDataSource);
     private final Poller poller = new Poller();
-
-    @BeforeEach
-    public void cleanDatabases() {
-        final String contextName = CONTEXT_NAME;
-
-        databaseCleaner.cleanEventStoreTables(contextName);
-        databaseCleaner.resetEventSubscriptionStatusTable(contextName);
-        cleanViewstoreTables();
-        databaseCleaner.cleanSystemTables(contextName);
-    }
 
     @Test
     public void shouldReplaySingleEventToEventIndexerUsingTheReplayEventToEventIndexerJmxCommand() throws Exception {
@@ -117,20 +104,4 @@ public class ReplayEventToEventIndexerIT {
         );
     }
 
-    private void cleanViewstoreTables() {
-
-        final String contextName = CONTEXT_NAME;
-
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        databaseCleaner.cleanViewStoreTables(contextName,
-                "ingredient",
-                "recipe",
-                "cake",
-                "cake_order",
-                "processed_event"
-        );
-
-        databaseCleaner.cleanStreamBufferTable(contextName);
-        databaseCleaner.cleanStreamStatusTable(contextName);
-    }
 }

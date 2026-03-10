@@ -5,7 +5,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 
 import uk.gov.justice.services.cakeshop.it.helpers.BatchEventInserter;
 import uk.gov.justice.services.cakeshop.it.helpers.CakeshopEventGenerator;
@@ -13,7 +12,6 @@ import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
 import uk.gov.justice.services.cakeshop.it.helpers.PositionInStreamIterator;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.Event;
 import uk.gov.justice.services.eventsourcing.util.jee.timer.StopWatchFactory;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,25 +20,19 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
+
+@ExtendWith(DatabaseResetExtension.class)
 public class PerformanceTestEventPublishingIT {
 
     private static final int BATCH_INSERT_SIZE = 10_000;
 
     private final DataSource eventStoreDataSource = new DatabaseManager().initEventStoreDb();
 
-    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
     private final BatchEventInserter batchEventInserter = new BatchEventInserter(eventStoreDataSource, BATCH_INSERT_SIZE);
-
-    @BeforeEach
-    public void before() {
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        cleanViewstoreTables();
-        databaseCleaner.cleanSystemTables(CONTEXT_NAME);
-    }
-
 
     // Warning. This test doesn't test anything. It's for adding events, so we can observe performance of publishing
     @Test
@@ -97,17 +89,4 @@ public class PerformanceTestEventPublishingIT {
         batchEventInserter.updateEventLogTable(events);
     }
 
-    private void cleanViewstoreTables() {
-        databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
-                "ingredient",
-                "recipe",
-                "cake",
-                "cake_order",
-                "processed_event",
-                "stream_error",
-                "stream_error_hash"
-        );
-        databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
-        databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
-    }
 }

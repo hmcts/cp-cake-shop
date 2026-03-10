@@ -6,6 +6,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.of;
 import static java.util.UUID.randomUUID;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -23,7 +24,6 @@ import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERR
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BY_ERROR_ID_URI_TEMPLATE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BY_STREAM_ID_URI_TEMPLATE;
 
-import javax.json.JsonValue;
 import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
 import uk.gov.justice.services.cakeshop.it.helpers.LinkedEventInserter;
 import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
@@ -36,10 +36,7 @@ import uk.gov.justice.services.eventsourcing.repository.jdbc.event.LinkedEvent;
 import uk.gov.justice.services.messaging.DefaultJsonObjectEnvelopeConverter;
 import uk.gov.justice.services.messaging.JsonEnvelope;
 import uk.gov.justice.services.messaging.Metadata;
-import uk.gov.justice.services.messaging.spi.DefaultJsonEnvelope;
 import uk.gov.justice.services.test.utils.core.reflection.ReflectionUtil;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -58,13 +55,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
+
+@ExtendWith(DatabaseResetExtension.class)
 public class RestResourcesIT {
 
     private final DataSource viewStoreDataSource = new DatabaseManager().initViewStoreDb();
     private final DataSource eventStoreDataSource = new DatabaseManager().initEventStoreDb();
     private final TestDataManager testDataManager = new TestDataManager(viewStoreDataSource);
     private final LinkedEventInserter linkedEventInserter = new LinkedEventInserter(eventStoreDataSource);
-    final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
     private final ObjectMapper objectMapper = new ObjectMapperProducer().objectMapper();
 
     private DefaultJsonObjectEnvelopeConverter jsonObjectEnvelopeConverter;
@@ -77,19 +77,6 @@ public class RestResourcesIT {
         jsonObjectEnvelopeConverter = new DefaultJsonObjectEnvelopeConverter();
         ReflectionUtil.setField(jsonObjectEnvelopeConverter, "objectMapper", objectMapper);
 
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        databaseCleaner.cleanViewStoreTables(
-                CONTEXT_NAME,
-                "stream_buffer",
-                "stream_status",
-                "stream_error_hash",
-                "stream_error",
-                "cake",
-                "cake_order",
-                "recipe",
-                "ingredient",
-                "processed_event");
     }
 
     @AfterEach
@@ -148,26 +135,35 @@ public class RestResourcesIT {
                     ]
                     """.formatted(streamId, errorId, streamId);
 
-            final Invocation.Builder byErrorHashRequest = client.target(STREAMS_QUERY_BY_ERROR_HASH_URI_TEMPLATE.formatted(errorHash)).request();
-            try (final Response response = byErrorHashRequest.get()) {
-                assertThat(response.getStatus(), is(200));
-                var actualResponse = response.readEntity(String.class);
-                assertEquals(expectedResponseWithErrorStreams, actualResponse, LENIENT);
-            }
+            await().until(() -> {
+                final Invocation.Builder byErrorHashRequest = client.target(STREAMS_QUERY_BY_ERROR_HASH_URI_TEMPLATE.formatted(errorHash)).request();
+                try (final Response response = byErrorHashRequest.get()) {
+                    assertThat(response.getStatus(), is(200));
+                    var actualResponse = response.readEntity(String.class);
+                    assertEquals(expectedResponseWithErrorStreams, actualResponse, LENIENT);
+                    return true;
+                }
+            });
 
-            final Invocation.Builder byStreamIdRequest = client.target(STREAMS_QUERY_BY_STREAM_ID_URI_TEMPLATE.formatted(streamId)).request();
-            try (final Response response = byStreamIdRequest.get()) {
-                assertThat(response.getStatus(), is(200));
-                var actualResponse = response.readEntity(String.class);
-                assertEquals(expectedResponseByStreamId, actualResponse, LENIENT);
-            }
+            await().until(() -> {
+                final Invocation.Builder byStreamIdRequest = client.target(STREAMS_QUERY_BY_STREAM_ID_URI_TEMPLATE.formatted(streamId)).request();
+                try (final Response response = byStreamIdRequest.get()) {
+                    assertThat(response.getStatus(), is(200));
+                    var actualResponse = response.readEntity(String.class);
+                    assertEquals(expectedResponseByStreamId, actualResponse, LENIENT);
+                    return true;
+                }
+            });
 
-            final Invocation.Builder getErroredStreamsRequest = client.target(STREAMS_QUERY_BY_HAS_ERROR).request();
-            try (final Response response = getErroredStreamsRequest.get()) {
-                assertThat(response.getStatus(), is(200));
-                var actualResponse = response.readEntity(String.class);
-                assertEquals(expectedResponseWithErrorStreams, actualResponse, LENIENT);
-            }
+            await().until(() -> {
+                final Invocation.Builder getErroredStreamsRequest = client.target(STREAMS_QUERY_BY_HAS_ERROR).request();
+                try (final Response response = getErroredStreamsRequest.get()) {
+                    assertThat(response.getStatus(), is(200));
+                    var actualResponse = response.readEntity(String.class);
+                    assertEquals(expectedResponseWithErrorStreams, actualResponse, LENIENT);
+                    return true;
+                }
+            });
         }
 
         @Test

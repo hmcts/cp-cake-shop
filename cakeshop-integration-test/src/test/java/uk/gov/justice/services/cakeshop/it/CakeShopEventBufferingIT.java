@@ -17,8 +17,6 @@ import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
 import uk.gov.justice.services.cakeshop.it.helpers.StandaloneStreamStatusJdbcRepositoryFactory;
 import uk.gov.justice.services.event.buffer.core.repository.subscription.StreamStatusJdbcRepository;
 import uk.gov.justice.services.event.buffer.core.repository.subscription.Subscription;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
-
 import java.util.Optional;
 
 import javax.sql.DataSource;
@@ -30,6 +28,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
+
+@ExtendWith(DatabaseResetExtension.class)
 public class CakeShopEventBufferingIT {
 
     private final DataSource viewStoreDatasource = new DatabaseManager().initViewStoreDb();
@@ -37,28 +39,11 @@ public class CakeShopEventBufferingIT {
     private final StreamStatusJdbcRepository streamStatusJdbcRepository = standaloneStreamStatusJdbcRepositoryFactory.getStreamStatusJdbcRepository(viewStoreDatasource);
 
     private final CommandFactory commandFactory = new CommandFactory();
-    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
-
     private Client client;
 
     @BeforeEach
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
-
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        databaseCleaner.cleanViewStoreTables(
-                CONTEXT_NAME,
-                "stream_buffer",
-                "stream_status",
-                "stream_error_hash",
-                "stream_error",
-                "cake",
-                "cake_order",
-                "recipe",
-                "ingredient",
-                "processed_event");
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
     }
 
     @AfterEach

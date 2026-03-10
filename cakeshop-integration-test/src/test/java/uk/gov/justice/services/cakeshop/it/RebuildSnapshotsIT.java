@@ -32,7 +32,6 @@ import uk.gov.justice.services.jmx.system.command.client.SystemCommanderClient;
 import uk.gov.justice.services.jmx.system.command.client.TestSystemCommanderClientFactory;
 import uk.gov.justice.services.messaging.Metadata;
 import uk.gov.justice.services.test.utils.core.messaging.Poller;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -44,28 +43,23 @@ import javax.json.JsonArrayBuilder;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
+
+@ExtendWith(DatabaseResetExtension.class)
 public class RebuildSnapshotsIT {
 
     private static final String EVENT_SOURCE = "cakeshop";
     private static final int NUMBER_OF_EVENTS_ON_STREAM_TO_CREATE = 100_000;
 
     private final TestSystemCommanderClientFactory systemCommanderClientFactory = new TestSystemCommanderClientFactory();
-    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
     private final UtcClock clock = new UtcClock();
     private final DataSource eventStoreDataSource = new DatabaseManager().initEventStoreDb();
     private final SnapshotJdbcRepository snapshotJdbcRepository = new StandaloneSnapshotJdbcRepositoryFactory().getSnapshotJdbcRepository(eventStoreDataSource);
     private final BatchEventInserter batchEventInserter = new BatchEventInserter(eventStoreDataSource, 10_000);
     private final Poller longPoller = new Poller(2400, 1000L);
-
-    @BeforeEach
-    public void cleanDatabase() {
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        cleanViewstoreTables();
-        databaseCleaner.cleanSystemTables(CONTEXT_NAME);
-    }
 
     @Test
     public void shouldUseJmxCommandToHydrateAggregateAndStoreSnapshot() throws Exception {
@@ -126,19 +120,6 @@ public class RebuildSnapshotsIT {
                 fail();
             }
         }
-    }
-
-    private void cleanViewstoreTables() {
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
-                "ingredient",
-                "recipe",
-                "cake",
-                "cake_order",
-                "processed_event"
-        );
-        databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
-        databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
     }
 
     private List<Event> createEvents(final long numberToCreate, final UUID streamId) {

@@ -16,8 +16,6 @@ import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamEr
 import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorHash;
 import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorOccurrence;
 import uk.gov.justice.services.test.utils.core.messaging.Poller;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
-
 import java.util.Optional;
 
 import javax.sql.DataSource;
@@ -27,13 +25,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
+
+@ExtendWith(DatabaseResetExtension.class)
 public class StreamErrorHandlingIT {
 
     private final DataSource viewStoreDataSource = new DatabaseManager().initViewStoreDb();
     private final TestDataManager testDataManager = new TestDataManager(viewStoreDataSource);
     private final StreamStatusFinder streamStatusFinder = new StreamStatusFinder(viewStoreDataSource);
-    final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
-
     private final Poller poller = new Poller(20, 1000L);
 
     private Client client;
@@ -41,21 +41,6 @@ public class StreamErrorHandlingIT {
     @BeforeEach
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
-
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        databaseCleaner.cleanViewStoreTables(
-                CONTEXT_NAME,
-                "stream_buffer",
-                "stream_status",
-                "stream_error_hash",
-                "stream_error",
-                "stream_error_retry",
-                "cake",
-                "cake_order",
-                "recipe",
-                "ingredient",
-                "processed_event");
     }
 
     @AfterEach

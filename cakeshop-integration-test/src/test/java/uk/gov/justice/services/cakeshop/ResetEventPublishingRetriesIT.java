@@ -9,7 +9,6 @@ import static java.util.UUID.randomUUID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
-import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.HOST;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.RECIPES_RESOURCE_URI;
 import static uk.gov.justice.services.common.converter.ZonedDateTimes.fromSqlTimestamp;
@@ -21,7 +20,6 @@ import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamEr
 import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorHash;
 import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorOccurrence;
 import uk.gov.justice.services.test.utils.core.messaging.Poller;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,35 +36,15 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ResetEventPublishingRetriesIT {
 
     protected static final String RESET_RETRY_COUNT_URI_PATTERN = "%s/cakeshop-service/internal/reset-stream-retry-count?streamId=%s&source=%s&component=%s";
-    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
     private final DataSource viewStoreDataSource = new DatabaseManager().initViewStoreDb();
 
     private final Client restEastClient = new RestEasyClientFactory().createResteasyClient();;
     private final Poller poller = new Poller(20, 1000L);;
-
-    @BeforeEach
-    public void before() throws Exception {
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        databaseCleaner.cleanViewStoreTables(
-                CONTEXT_NAME,
-                "stream_buffer",
-                "stream_status",
-                "stream_error_hash",
-                "stream_error",
-                "stream_error_retry",
-                "cake",
-                "cake_order",
-                "recipe",
-                "ingredient",
-                "processed_event");
-    }
 
     @AfterEach
     public void cleanup() throws Exception {

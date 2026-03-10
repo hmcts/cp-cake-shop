@@ -35,8 +35,6 @@ import uk.gov.justice.services.common.converter.ObjectToJsonObjectConverter;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.Event;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventJdbcRepository;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventRepositoryFactory;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
-
 import java.util.Optional;
 
 import javax.jms.MessageConsumer;
@@ -51,6 +49,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
+
+@ExtendWith(DatabaseResetExtension.class)
 public class CakeShopIT {
 
     private final DataSource eventStoreDataSource = new DatabaseManager().initEventStoreDb();
@@ -61,13 +63,11 @@ public class CakeShopIT {
     private final EventFactory eventFactory = new EventFactory();
     private final EventFinder eventFinder = new EventFinder(eventJdbcRepository);
     private final CommandFactory commandFactory = new CommandFactory();
-    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
-
     private Client client;
     private Querier querier;
     private CommandSender commandSender;
 
-    private static final int MAX_POLL_TIME_IN_SECONDS = 20;
+    private static final int MAX_POLL_TIME_IN_SECONDS = 30;
 
     @BeforeEach
     public void before() throws Exception {
@@ -75,20 +75,6 @@ public class CakeShopIT {
         querier = new Querier(client);
         commandSender = new CommandSender(client, eventFactory);
 
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        databaseCleaner.cleanViewStoreTables(
-                CONTEXT_NAME,
-                "stream_buffer",
-                "stream_status",
-                "stream_error_hash",
-                "stream_error",
-                "cake",
-                "cake_order",
-                "recipe",
-                "ingredient",
-                "processed_event");
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
     }
 
     @AfterEach

@@ -24,8 +24,6 @@ import uk.gov.justice.services.eventsourcing.repository.jdbc.event.Event;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventJdbcRepository;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventRepositoryFactory;
 import uk.gov.justice.services.test.utils.core.http.HttpResponsePoller;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +35,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
+
+@ExtendWith(DatabaseResetExtension.class)
 public class CakeShopConcurrencyIT {
 
     private final DataSource eventStoreDataSource = new DatabaseManager().initEventStoreDb();
@@ -44,15 +46,11 @@ public class CakeShopConcurrencyIT {
 
     private final HttpResponsePoller httpResponsePoller = new HttpResponsePoller();
     private final EventFinder eventFinder = new EventFinder(eventJdbcRepository);
-    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
-
     private Client client;
 
     @BeforeEach
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        cleanViewstoreTables();
     }
 
     @AfterEach
@@ -120,17 +118,4 @@ public class CakeShopConcurrencyIT {
         assertThat(notFoundResponse, notNullValue());
     }
 
-    private void cleanViewstoreTables() {
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
-                "ingredient",
-                "recipe",
-                "cake",
-                "cake_order",
-                "processed_event"
-        );
-        databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
-        databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-    }
 }

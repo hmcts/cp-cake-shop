@@ -19,7 +19,6 @@ import uk.gov.justice.services.jmx.system.command.client.SystemCommanderClient;
 import uk.gov.justice.services.jmx.system.command.client.TestSystemCommanderClientFactory;
 import uk.gov.justice.services.subscription.ProcessedEvent;
 import uk.gov.justice.services.test.utils.core.messaging.Poller;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -27,30 +26,22 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
 
 @Disabled("Disabled until refactoring of catchup with framework 105.x completed - allan 2025/02/05")
+@ExtendWith(DatabaseResetExtension.class)
 public class ReplayEventToEventListenerIT {
 
     private final TestSystemCommanderClientFactory systemCommanderClientFactory = new TestSystemCommanderClientFactory();
 
     private final DataSource eventStoreDataSource = new DatabaseManager().initEventStoreDb();
     private final DataSource viewStoreDataSource = new DatabaseManager().initViewStoreDb();
-    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
     private final LinkedEventInserter linkedEventInserter = new LinkedEventInserter(eventStoreDataSource);
     private final ProcessedEventFinder processedEventFinder = new ProcessedEventFinder(viewStoreDataSource);
     private final Poller poller = new Poller();
-
-    @BeforeEach
-    public void cleanDatabases() {
-        final String contextName = CONTEXT_NAME;
-
-        databaseCleaner.cleanEventStoreTables(contextName);
-        cleanViewstoreTables();
-        databaseCleaner.cleanSystemTables(contextName);
-    }
 
     @Disabled("Do not check in")
     @Test
@@ -111,21 +102,5 @@ public class ReplayEventToEventListenerIT {
         );
     }
 
-    private void cleanViewstoreTables() {
-
-        final String contextName = CONTEXT_NAME;
-
-        databaseCleaner.cleanViewStoreTables(contextName,
-                "ingredient",
-                "recipe",
-                "cake",
-                "cake_order",
-                "processed_event"
-        );
-
-        databaseCleaner.cleanStreamBufferTable(contextName);
-        databaseCleaner.cleanStreamStatusTable(contextName);
-        databaseCleaner.resetEventSubscriptionStatusTable(contextName);
-    }
 }
 

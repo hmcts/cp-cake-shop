@@ -16,7 +16,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.RECIPES_RESOURCE_QUERY_URI;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.RECIPES_RESOURCE_URI;
 import static uk.gov.justice.services.test.utils.core.matchers.HttpStatusCodeMatcher.isStatus;
@@ -30,7 +29,6 @@ import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.Event;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventJdbcRepository;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventRepositoryFactory;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +47,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
+
+@ExtendWith(DatabaseResetExtension.class)
 public class CakeShopFileServiceIT {
 
     private final DataSource eventStoreDataSource = new DatabaseManager().initEventStoreDb();
@@ -62,7 +64,6 @@ public class CakeShopFileServiceIT {
 
     @BeforeEach
     public void before() throws Exception {
-        new DatabaseCleaner().cleanViewStoreTables(CONTEXT_NAME, "cake", "cake_order", "recipe", "ingredient", "processed_event");
         client = new RestEasyClientFactory().createResteasyClient();
         querier = new Querier(client);
         commandSender = new CommandSender(client, new EventFactory());

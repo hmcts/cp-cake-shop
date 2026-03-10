@@ -78,8 +78,10 @@ public class CakeShopEventBufferingIT {
             assertThat(response.getStatus(), is(202));
         }
 
-        await().atMost(ofSeconds(20)).until(() -> subscription(recipeId).isPresent());
-        assertThat(subscription(recipeId).get().getPosition(), is(1L));
+        await().until(() -> {
+            Optional<Subscription> streamEvent = subscription(recipeId);
+            return streamEvent.isPresent() && streamEvent.get().getPosition() == 1L;
+        });
     }
 
     @SuppressWarnings("SameParameterValue")

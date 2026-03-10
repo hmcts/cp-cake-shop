@@ -1,7 +1,20 @@
 package uk.gov.justice.services.cakeshop.it;
 
+import java.util.concurrent.atomic.AtomicReference;
+import javax.ws.rs.client.Client;
+import org.apache.http.message.BasicNameValuePair;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import uk.gov.justice.services.cakeshop.it.helpers.ApiResponse;
+import uk.gov.justice.services.cakeshop.it.helpers.CommandSender;
+import uk.gov.justice.services.cakeshop.it.helpers.EventFactory;
+import uk.gov.justice.services.cakeshop.it.helpers.Querier;
+import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
+
 import static com.jayway.jsonassert.JsonAssert.emptyCollection;
 import static com.jayway.jsonassert.JsonAssert.with;
+import static java.time.Duration.ofSeconds;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -11,19 +24,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.RECIPES_RESOURCE_URI;
-
-import uk.gov.justice.services.cakeshop.it.helpers.ApiResponse;
-import uk.gov.justice.services.cakeshop.it.helpers.CommandSender;
-import uk.gov.justice.services.cakeshop.it.helpers.EventFactory;
-import uk.gov.justice.services.cakeshop.it.helpers.Querier;
-import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
-
-import javax.ws.rs.client.Client;
-
-import org.apache.http.message.BasicNameValuePair;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 public class CakeShopFilteringIT {
 
@@ -54,9 +54,14 @@ public class CakeShopFilteringIT {
         final String recipeId2 = randomUUID().toString();
         commandSender.addRecipe(recipeId2, "Chocolate muffin");
 
-        await().until(() -> querier.recipesQueryResult().body().contains(recipeId));
+        final AtomicReference<ApiResponse> responseRef = new AtomicReference<>();
+        await().atMost(ofSeconds(30)).until(() -> {
+            final ApiResponse response = querier.recipesQueryResult(singletonList(new BasicNameValuePair("pagesize", "1")));
+            responseRef.set(response);
+            return response.body().contains(recipeId);
+        });
 
-        final ApiResponse response = querier.recipesQueryResult(singletonList(new BasicNameValuePair("pagesize", "1")));
+        final ApiResponse response = responseRef.get();
         assertThat(response.httpCode(), is(OK.getStatusCode()));
 
         with(response.body())
@@ -75,12 +80,16 @@ public class CakeShopFilteringIT {
         client.target(RECIPES_RESOURCE_URI + recipeId2).request()
                 .post(eventFactory.recipeEntity("Oat cake", true));
 
-        await().until(() -> querier.recipesQueryResult().body().contains(recipeId2));
+        final AtomicReference<ApiResponse> responseRef = new AtomicReference<>();
+        await().atMost(ofSeconds(30)).until(() -> {
+            final ApiResponse response = querier.recipesQueryResult(asList(
+                    new BasicNameValuePair("pagesize", "1"),
+                    new BasicNameValuePair("glutenFree", "true")));
+            responseRef.set(response);
+            return response.body().contains(recipeId2);
+        });
 
-        final ApiResponse response = querier.recipesQueryResult(asList(
-                new BasicNameValuePair("pagesize", "30"),
-                new BasicNameValuePair("glutenFree", "true")));
-
+        final ApiResponse response = responseRef.get();
         assertThat(response.httpCode(), is(OK.getStatusCode()));
 
         with(response.body())

@@ -5,6 +5,7 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 ## [Unreleased]
 ### Changed
+- Reset database state before each test through junit5 extension
 - Updated to framework 17.105.x
 - IT tests now run using the new pull mechanism in the framework
 - Pull mechanism now has retries for failed events

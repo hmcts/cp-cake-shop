@@ -49,7 +49,7 @@
         <file-service.version>17.103.0</file-service.version>
         <framework-libraries.version>17.104.0</framework-libraries.version>
         <framework.version>17.105.0-M4</framework.version>
-        <event-store.version>17.105.0-M10</event-store.version>
+        <event-store.version>17.105.0-M12</event-store.version>
     </properties>
 
     <dependencyManagement>

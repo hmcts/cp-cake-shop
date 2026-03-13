@@ -17,8 +17,6 @@ import static uk.gov.justice.services.test.utils.core.matchers.HttpStatusCodeMat
 import uk.gov.justice.services.cakeshop.it.helpers.ApiResponse;
 import uk.gov.justice.services.cakeshop.it.helpers.Querier;
 import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
-
 import java.util.UUID;
 
 import javax.ws.rs.client.Client;
@@ -28,18 +26,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
+
+@ExtendWith(DatabaseResetExtension.class)
 public class UnifiedSearchIndexerIT {
 
     private final Client client = new RestEasyClientFactory().createResteasyClient();
     private final Querier querier = new Querier(client);
 
-    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
-
     @BeforeEach
     public void before() throws Exception {
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        cleanViewstoreTables();
     }
 
     @AfterEach
@@ -72,16 +69,4 @@ public class UnifiedSearchIndexerIT {
                 .assertThat("$.deliveryDate", equalTo("2016-01-21T16:42:03.522Z"));
     }
 
-    private void cleanViewstoreTables() {
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
-                "ingredient",
-                "recipe",
-                "cake",
-                "cake_order",
-                "processed_event"
-        );
-        databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
-        databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
-    }
 }

@@ -20,7 +20,6 @@ import uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParameters;
 import uk.gov.justice.services.jmx.system.command.client.SystemCommanderClient;
 import uk.gov.justice.services.jmx.system.command.client.TestSystemCommanderClientFactory;
 import uk.gov.justice.services.test.utils.core.messaging.Poller;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import static com.jayway.jsonassert.JsonAssert.with;
 import static java.lang.String.format;
@@ -43,6 +42,10 @@ import static uk.gov.justice.services.management.suspension.commands.SuspendComm
 import static uk.gov.justice.services.management.suspension.commands.UnsuspendCommand.UNSUSPEND;
 import static uk.gov.justice.services.test.utils.core.matchers.HttpStatusCodeMatcher.isStatus;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
+
+@ExtendWith(DatabaseResetExtension.class)
 public class SuspendIT {
 
     private static final Logger logger = getLogger(SuspendIT.class);
@@ -56,7 +59,6 @@ public class SuspendIT {
     private CommandSender commandSender;
 
     private final TestSystemCommanderClientFactory testSystemCommanderClientFactory = new TestSystemCommanderClientFactory();
-    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
     private final Poller poller = new Poller();
 
     @BeforeEach
@@ -64,21 +66,6 @@ public class SuspendIT {
         client = new RestEasyClientFactory().createResteasyClient();
         querier = new Querier(client);
         commandSender = new CommandSender(client, eventFactory);
-
-        databaseCleaner.cleanSystemTables(CONTEXT_NAME);
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
-                "cake",
-                "cake_order",
-                "recipe",
-                "ingredient",
-                "index",
-                "index",
-                "processed_event",
-                "stream_buffer",
-                "stream_status",
-                "stream_error");
     }
 
     @AfterEach

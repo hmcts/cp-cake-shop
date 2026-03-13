@@ -12,6 +12,7 @@ import static uk.gov.justice.services.jmx.api.mbean.CommandRunMode.GUARDED;
 import static uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParameters.withNoCommandParameters;
 
 import uk.gov.justice.services.cakeshop.it.helpers.BatchEventInserter;
+import uk.gov.justice.services.cakeshop.it.helpers.CakeShopDatabaseCleaner;
 import uk.gov.justice.services.cakeshop.it.helpers.CakeshopEventGenerator;
 import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
 import uk.gov.justice.services.cakeshop.it.helpers.JmxParametersFactory;
@@ -22,7 +23,6 @@ import uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParameters;
 import uk.gov.justice.services.jmx.system.command.client.SystemCommanderClient;
 import uk.gov.justice.services.jmx.system.command.client.TestSystemCommanderClientFactory;
 import uk.gov.justice.services.test.utils.core.messaging.Poller;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +31,13 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
 
 @Disabled("Disabled until refactoring of catchup with framework 105.x completed - allan 2025/02/05")
+@ExtendWith(DatabaseResetExtension.class)
 public class CatchupPerformanceIT {
 
     private static final int BATCH_INSERT_SIZE = 10_000;
@@ -47,17 +48,10 @@ public class CatchupPerformanceIT {
     private final ProcessedEventFinder processedEventCounter = new ProcessedEventFinder(viewStoreDataSource);
 
     private final TestSystemCommanderClientFactory systemCommanderClientFactory = new TestSystemCommanderClientFactory();
-    private final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
-
     private final Poller longPoller = new Poller(2400, 1000L);
     private final BatchEventInserter batchEventInserter = new BatchEventInserter(eventStoreDataSource, BATCH_INSERT_SIZE);
 
-    @BeforeEach
-    public void before() {
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        cleanViewstoreTables();
-        databaseCleaner.cleanSystemTables(CONTEXT_NAME);
-    }
+    private final CakeShopDatabaseCleaner cakeShopDatabaseCleaner = new CakeShopDatabaseCleaner();
 
     @Test
     public void shouldReplayAndFindRecipesInViewStore() throws Exception {
@@ -91,7 +85,7 @@ public class CatchupPerformanceIT {
         assertThat(processedEventCount, is(of(totalEvents)));
 
 
-        cleanViewstoreTables();
+        cakeShopDatabaseCleaner.cleanViewStoreTables();
 
         System.out.println("Running catchup...");
         runCatchup();
@@ -155,18 +149,5 @@ public class CatchupPerformanceIT {
                     jmxCommandRuntimeParameters.getCommandRuntimeString(),
                     GUARDED.isGuarded());
         }
-    }
-
-    private void cleanViewstoreTables() {
-        databaseCleaner.cleanViewStoreTables(CONTEXT_NAME,
-                "ingredient",
-                "recipe",
-                "cake",
-                "cake_order",
-                "processed_event"
-        );
-        databaseCleaner.cleanStreamBufferTable(CONTEXT_NAME);
-        databaseCleaner.cleanStreamStatusTable(CONTEXT_NAME);
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
     }
 }

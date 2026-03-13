@@ -14,40 +14,27 @@ import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
 import uk.gov.justice.services.cakeshop.it.helpers.TestDataManager;
 import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamError;
 import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamErrorHash;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
-
 import static com.jayway.jsonassert.JsonAssert.with;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.ACTIVE_STREAM_ERRORS_QUERY_BASE_URI;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseResetExtension;
+
+@ExtendWith(DatabaseResetExtension.class)
 public class ActiveErrorsRestResourceIT {
 
     protected static final String CONTEXT_NAME = "cakeshop";
     private final DataSource viewStoreDataSource = new DatabaseManager().initViewStoreDb();
     private final TestDataManager testDataManager = new TestDataManager(viewStoreDataSource);
-    final DatabaseCleaner databaseCleaner = new DatabaseCleaner();
-
     private Client client;
 
     @BeforeEach
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
 
-        databaseCleaner.cleanEventStoreTables(CONTEXT_NAME);
-        databaseCleaner.resetEventSubscriptionStatusTable(CONTEXT_NAME);
-        databaseCleaner.cleanViewStoreTables(
-                CONTEXT_NAME,
-                "stream_buffer",
-                "stream_status",
-                "stream_error_hash",
-                "stream_error",
-                "cake",
-                "cake_order",
-                "recipe",
-                "ingredient",
-                "processed_event");
     }
 
     @AfterEach

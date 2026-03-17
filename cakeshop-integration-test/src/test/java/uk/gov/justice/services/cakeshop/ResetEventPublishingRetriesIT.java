@@ -13,6 +13,7 @@ import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.HOST;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.RECIPES_RESOURCE_URI;
 import static uk.gov.justice.services.common.converter.ZonedDateTimes.fromSqlTimestamp;
 
+import org.junit.jupiter.api.Disabled;
 import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
 import uk.gov.justice.services.cakeshop.it.helpers.EventFactory;
 import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
@@ -38,6 +39,7 @@ import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+@Disabled("Not valid for framework-f compatability mode")
 public class ResetEventPublishingRetriesIT {
 
     protected static final String RESET_RETRY_COUNT_URI_PATTERN = "%s/cakeshop-service/internal/reset-stream-retry-count?streamId=%s&source=%s&component=%s";

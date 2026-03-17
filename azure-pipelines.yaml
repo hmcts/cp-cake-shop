@@ -5,6 +5,7 @@ trigger:
     include:
       - main
       - 'team/*'
+      - 'dev/framework-f-compatibility'
     exclude:
       - 'dev/release-*'
   paths:
@@ -46,4 +47,4 @@ stages:
           sonarQubeType: 'sonarQubeAKS'
           serviceName: ${{ variables['service_Name'] }}
           itTestFolder: ${{ variables['itTest_Folder'] }}
-          aksDeployBranch: 'dev/framework-f-fullfeature'
+          aksDeployBranch: 'dev/framework-f-compatibility'

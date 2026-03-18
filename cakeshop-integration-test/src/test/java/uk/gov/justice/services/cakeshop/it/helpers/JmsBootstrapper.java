@@ -21,7 +21,8 @@ public class JmsBootstrapper {
     private static final String JMS_USERNAME = SystemPropertyFinder.findJmsUserName();
     private static final String JMS_PASSWORD = SystemPropertyFinder.findJmsUserPassword();
     private static final String JMS_PORT = SystemPropertyFinder.findJmsPort();
-    private static final String JMS_BROKER_URL = "tcp://localhost:" + JMS_PORT;
+    private static final String JMS_HOST = System.getProperty("INTEGRATION_HOST_KEY", "localhost");
+    private static final String JMS_BROKER_URL = "tcp://" + JMS_HOST + ":" + JMS_PORT;
     private final Poller poller = new Poller();
 
     private final ActiveMQConnectionFactory jmsConnectionFactory = new ActiveMQConnectionFactory(JMS_BROKER_URL);

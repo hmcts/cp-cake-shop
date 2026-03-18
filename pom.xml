@@ -7,7 +7,7 @@
     <parent>
         <groupId>uk.gov.justice</groupId>
         <artifactId>maven-framework-parent-pom</artifactId>
-        <version>17.101.0</version>
+        <version>17.103.0</version>
     </parent>
 
     <groupId>uk.gov.justice.services</groupId>
@@ -44,10 +44,10 @@
         <wildfly.version>26.1.2.Final</wildfly.version>
         <wildfly.maven.plugin.version>4.1.1.Final</wildfly.maven.plugin.version>
 
-        <framework-libraries.version>17.103.0</framework-libraries.version>
-        <framework.version>17.103.0</framework.version>
-        <event-store.version>17.103.5</event-store.version>
-        <file-service.version>17.103.0</file-service.version>
+        <framework-libraries.version>17.103.1</framework-libraries.version>
+        <framework.version>17.103.2</framework.version>
+        <event-store.version>17.103.7</event-store.version>
+        <file-service.version>17.103.2</file-service.version>
     </properties>
 
     <dependencyManagement>
@@ -560,46 +560,6 @@
                     <value>!false</value>
                 </property>
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>3.1.2</version>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <random.jms.port>${random-jms-port}</random.jms.port>
-                                <random.http.port>${random-http-port}</random.http.port>
-                                <random.management.port>${random-management-port}</random.management.port>
-                                <!-- Wildfly uses embedded artemis and these credentials are configured through wildfly application-users.properties file-->
-                                <jms.user.name>jmsuser</jms.user.name>
-                                <jms.user.password>jms@user123</jms.user.password>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>reserve-jms-port</id>
-                                <goals>
-                                    <goal>reserve-network-port</goal>
-                                </goals>
-                                <phase>process-resources</phase>
-                                <configuration>
-                                    <portNames>
-                                        <portName>random-jms-port</portName>
-                                        <portName>random-http-port</portName>
-                                        <portName>random-management-port</portName>
-                                    </portNames>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 </project>

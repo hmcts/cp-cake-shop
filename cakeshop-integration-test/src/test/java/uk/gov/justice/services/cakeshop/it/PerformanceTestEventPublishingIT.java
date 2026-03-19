@@ -47,8 +47,8 @@ public class PerformanceTestEventPublishingIT {
     public void shouldInsertManyEventsOnManyStreamsToPerformanceTestPublishing() throws Exception {
 
         // Please adjust to taste
-        final int numberOfStreams = 100;
-        final int numberOfEventsPerStream = 100;
+        final int numberOfStreams = Integer.getInteger("stream.count", 100);
+        final int numberOfEventsPerStream = Integer.getInteger("events.per.stream", 100);
 
         System.out.println(format("Adding %d events on %d streams to event_log and published_event, giving %d events in total",
                 numberOfEventsPerStream,

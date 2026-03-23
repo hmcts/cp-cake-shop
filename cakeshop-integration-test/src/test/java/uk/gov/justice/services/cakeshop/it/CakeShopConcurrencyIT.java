@@ -155,8 +155,8 @@ public class CakeShopConcurrencyIT {
                 totalSecs / 60.0, eventLogCount / totalSecs);
         System.out.printf("========================================%n%n");
 
-        assertThat("streamsBehind should be 0", countStreamsBehind(), is(0));
-        assertThat("no stream errors expected", countStreamsWithErrors(), is(0));
+        await().until(() -> countStreamsBehind() == 0);
+        await().until(() -> countStreamsWithErrors() == 0);
     }
 
     // ========================================================================

@@ -9,6 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.DB_CONTEXT_NAME;
 import static uk.gov.justice.services.eventstore.management.commands.RebuildCommand.REBUILD;
 import static uk.gov.justice.services.jmx.api.mbean.CommandRunMode.GUARDED;
 import static uk.gov.justice.services.jmx.api.parameters.JmxCommandRuntimeParameters.withNoCommandParameters;
@@ -57,8 +58,8 @@ public class RebuildIT {
         final Client client = new RestEasyClientFactory().createResteasyClient();
         commandSender = new CommandSender(client, eventFactory);
 
-        databaseCleaner.cleanEventStoreTables("framework");
-        databaseCleaner.cleanViewStoreTables("framework", "cake", "cake_order", "recipe", "ingredient", "processed_event");
+        databaseCleaner.cleanEventStoreTables(DB_CONTEXT_NAME);
+        databaseCleaner.cleanViewStoreTables(DB_CONTEXT_NAME, "cake", "cake_order", "recipe", "ingredient", "processed_event");
     }
 
     @Test

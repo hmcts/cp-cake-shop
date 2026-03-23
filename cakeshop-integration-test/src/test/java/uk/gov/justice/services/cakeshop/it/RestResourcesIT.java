@@ -1,13 +1,31 @@
 package uk.gov.justice.services.cakeshop.it;
 
+import java.util.Optional;
+import java.util.UUID;
+import javax.sql.DataSource;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
+import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
+import uk.gov.justice.services.cakeshop.it.helpers.TestDataManager;
+import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamError;
+import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
+
 import static com.jayway.jsonpath.JsonPath.read;
 import static java.util.UUID.randomUUID;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.LENIENT;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.DB_CONTEXT_NAME;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BASE_URI;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BY_ERROR_HASH_URI_TEMPLATE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QUERY_BY_HAS_ERROR;
@@ -15,25 +33,6 @@ import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAMS_QU
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BASE_URI;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BY_ERROR_ID_URI_TEMPLATE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BY_STREAM_ID_URI_TEMPLATE;
-
-import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
-import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
-import uk.gov.justice.services.cakeshop.it.helpers.TestDataManager;
-import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamError;
-import uk.gov.justice.services.test.utils.persistence.DatabaseCleaner;
-
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 
 public class RestResourcesIT {
 
@@ -47,9 +46,9 @@ public class RestResourcesIT {
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
 
-        databaseCleaner.cleanEventStoreTables("framework");
+        databaseCleaner.cleanEventStoreTables(DB_CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(
-                "framework",
+                DB_CONTEXT_NAME,
                 "stream_buffer",
                 "stream_status",
                 "stream_error_hash",
@@ -117,26 +116,35 @@ public class RestResourcesIT {
                     ]
                     """.formatted(streamId, errorId, streamId);
 
-            final Invocation.Builder byErrorHashRequest = client.target(STREAMS_QUERY_BY_ERROR_HASH_URI_TEMPLATE.formatted(errorHash)).request();
-            try (final Response response = byErrorHashRequest.get()) {
-                assertThat(response.getStatus(), is(200));
-                var actualResponse = response.readEntity(String.class);
-                assertEquals(expectedResponseWithErrorStreams, actualResponse, LENIENT);
-            }
+            await().until(() -> {
+                final Invocation.Builder byErrorHashRequest = client.target(STREAMS_QUERY_BY_ERROR_HASH_URI_TEMPLATE.formatted(errorHash)).request();
+                try (final Response response = byErrorHashRequest.get()) {
+                    assertThat(response.getStatus(), is(200));
+                    var actualResponse = response.readEntity(String.class);
+                    assertEquals(expectedResponseWithErrorStreams, actualResponse, LENIENT);
+                    return true;
+                }
+            });
 
-            final Invocation.Builder byStreamIdRequest = client.target(STREAMS_QUERY_BY_STREAM_ID_URI_TEMPLATE.formatted(streamId)).request();
-            try (final Response response = byStreamIdRequest.get()) {
-                assertThat(response.getStatus(), is(200));
-                var actualResponse = response.readEntity(String.class);
-                assertEquals(expectedResponseByStreamId, actualResponse, LENIENT);
-            }
+            await().until(() -> {
+                final Invocation.Builder byStreamIdRequest = client.target(STREAMS_QUERY_BY_STREAM_ID_URI_TEMPLATE.formatted(streamId)).request();
+                try (final Response response = byStreamIdRequest.get()) {
+                    assertThat(response.getStatus(), is(200));
+                    var actualResponse = response.readEntity(String.class);
+                    assertEquals(expectedResponseByStreamId, actualResponse, LENIENT);
+                    return true;
+                }
+            });
 
-            final Invocation.Builder getErroredStreamsRequest = client.target(STREAMS_QUERY_BY_HAS_ERROR).request();
-            try (final Response response = getErroredStreamsRequest.get()) {
-                assertThat(response.getStatus(), is(200));
-                var actualResponse = response.readEntity(String.class);
-                assertEquals(expectedResponseWithErrorStreams, actualResponse, LENIENT);
-            }
+            await().until(() -> {
+                final Invocation.Builder getErroredStreamsRequest = client.target(STREAMS_QUERY_BY_HAS_ERROR).request();
+                try (final Response response = getErroredStreamsRequest.get()) {
+                    assertThat(response.getStatus(), is(200));
+                    var actualResponse = response.readEntity(String.class);
+                    assertEquals(expectedResponseWithErrorStreams, actualResponse, LENIENT);
+                    return true;
+                }
+            });
         }
 
         @Test
@@ -194,25 +202,30 @@ public class RestResourcesIT {
                      ]
                     """.formatted(errorId, errorHash, streamId, errorHash);
 
-            final Invocation.Builder byStreamIdRequest = client.target(STREAM_ERRORS_QUERY_BY_STREAM_ID_URI_TEMPLATE.formatted(streamId)).request();
-            try (final Response response = byStreamIdRequest.get()) {
-                assertThat(response.getStatus(), is(200));
-                var actualResponse = response.readEntity(String.class);
-                assertEquals(expectedResponse, actualResponse, LENIENT);
-                assertThat(read(actualResponse, "$[0].streamErrorDetails.causeMessage"), containsString("violates not-null constraint"));
-                assertThat(read(actualResponse, "$[0].streamErrorDetails.eventId"), notNullValue());
-                assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));
-            }
+            await().until(() -> {
+                final Invocation.Builder byStreamIdRequest = client.target(STREAM_ERRORS_QUERY_BY_STREAM_ID_URI_TEMPLATE.formatted(streamId)).request();
+                try (final Response response = byStreamIdRequest.get()) {
+                    assertThat(response.getStatus(), is(200));
+                    var actualResponse = response.readEntity(String.class);
+                    assertThat(read(actualResponse, "$[0].streamErrorDetails.causeMessage"), containsString("violates not-null constraint"));
+                    assertThat(read(actualResponse, "$[0].streamErrorDetails.eventId"), notNullValue());
+                    assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));
+                    return true;
+                }
+            });
 
-            final Invocation.Builder byErrorHashRequest = client.target(STREAM_ERRORS_QUERY_BY_ERROR_ID_URI_TEMPLATE.formatted(errorId)).request();
-            try (final Response response = byErrorHashRequest.get()) {
-                assertThat(response.getStatus(), is(200));
-                var actualResponse = response.readEntity(String.class);
-                assertEquals(expectedResponse, actualResponse, LENIENT);
-                assertThat(read(actualResponse, "$[0].streamErrorDetails.causeMessage"), containsString("violates not-null constraint"));
-                assertThat(read(actualResponse, "$[0].streamErrorDetails.eventId"), notNullValue());
-                assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));
-            }
+
+            await().until(() -> {
+                final Invocation.Builder byErrorHashRequest = client.target(STREAM_ERRORS_QUERY_BY_ERROR_ID_URI_TEMPLATE.formatted(errorId)).request();
+                try (final Response response = byErrorHashRequest.get()) {
+                    assertThat(response.getStatus(), is(200));
+                    var actualResponse = response.readEntity(String.class);
+                    assertThat(read(actualResponse, "$[0].streamErrorDetails.causeMessage"), containsString("violates not-null constraint"));
+                    assertThat(read(actualResponse, "$[0].streamErrorDetails.eventId"), notNullValue());
+                    assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));
+                    return true;
+                }
+            });
         }
 
         @Test

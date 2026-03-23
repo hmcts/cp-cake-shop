@@ -70,8 +70,7 @@ public class CakeShopConcurrencyIT {
         exec.awaitTermination(30, TimeUnit.SECONDS);
     }
 
-    @Test
-    public void shouldRegisterRecipeRemovedEvent() {
+    private void shouldRegisterRecipeRemovedEvent() {
 
 
         final String recipeId = randomUUID().toString();

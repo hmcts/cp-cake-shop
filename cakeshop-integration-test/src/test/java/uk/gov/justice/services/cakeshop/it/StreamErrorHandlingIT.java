@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.DB_CONTEXT_NAME;
 
 public class StreamErrorHandlingIT {
 
@@ -38,9 +39,9 @@ public class StreamErrorHandlingIT {
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
 
-        databaseCleaner.cleanEventStoreTables("framework");
+        databaseCleaner.cleanEventStoreTables(DB_CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(
-                "framework",
+                DB_CONTEXT_NAME,
                 "stream_buffer",
                 "stream_status",
                 "stream_error_hash",

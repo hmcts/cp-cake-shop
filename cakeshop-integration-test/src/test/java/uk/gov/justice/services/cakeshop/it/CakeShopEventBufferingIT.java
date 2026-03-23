@@ -10,6 +10,8 @@ import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopMediaTypes.ADD_RECIPE_MEDIA_TYPE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.RECIPES_RESOURCE_URI;
 
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Response;
 import uk.gov.justice.services.cakeshop.it.helpers.CommandFactory;
 import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
 import uk.gov.justice.services.cakeshop.it.helpers.StandaloneStreamStatusJdbcRepositoryFactory;
@@ -50,9 +52,13 @@ public class CakeShopEventBufferingIT {
     public void shouldUpdateEventBufferStatus() throws Exception {
         final String recipeId = randomUUID().toString();
 
-        client.target(RECIPES_RESOURCE_URI + recipeId)
+        final Entity<String> entity = entity(commandFactory.addRecipeCommand(), ADD_RECIPE_MEDIA_TYPE);
+
+        try(final Response response = client.target(RECIPES_RESOURCE_URI + recipeId)
                 .request()
-                .post(entity(commandFactory.addRecipeCommand(), ADD_RECIPE_MEDIA_TYPE));
+                .post(entity)) {
+            assertThat(response.getStatus(), is(202));
+        }
 
         await().until(() -> subscription(recipeId).isPresent());
         assertThat(subscription(recipeId).get().getPosition(), is(1L));

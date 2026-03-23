@@ -13,6 +13,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.slf4j.LoggerFactory.getLogger;
 import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.DB_CONTEXT_NAME;
 import static uk.gov.justice.services.jmx.api.domain.CommandState.COMMAND_COMPLETE;
 import static uk.gov.justice.services.jmx.api.mbean.CommandRunMode.FORCED;
 import static uk.gov.justice.services.jmx.api.mbean.CommandRunMode.GUARDED;
@@ -68,10 +69,9 @@ public class SuspendIT {
         querier = new Querier(client);
         commandSender = new CommandSender(client, eventFactory);
 
-        final String contextName = "framework";
-        databaseCleaner.cleanSystemTables(contextName);
-        databaseCleaner.cleanEventStoreTables(contextName);
-        databaseCleaner.cleanViewStoreTables(contextName,
+        databaseCleaner.cleanSystemTables(DB_CONTEXT_NAME);
+        databaseCleaner.cleanEventStoreTables(DB_CONTEXT_NAME);
+        databaseCleaner.cleanViewStoreTables(DB_CONTEXT_NAME,
                 "cake",
                 "cake_order",
                 "recipe",

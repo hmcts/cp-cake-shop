@@ -7,6 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static uk.gov.justice.services.cakeshop.it.helpers.JmxParametersFactory.buildJmxParameters;
 import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.DB_CONTEXT_NAME;
 import static uk.gov.justice.services.eventstore.management.commands.ReplayEventToEventIndexerCommand.REPLAY_EVENT_TO_EVENT_INDEXER;
 import static uk.gov.justice.services.jmx.api.mbean.CommandRunMode.FORCED;
 
@@ -44,7 +45,7 @@ public class ReplayEventToEventIndexerIT {
 
     @BeforeEach
     public void cleanDatabases() {
-        final String contextName = "framework";
+        final String contextName = "cakeshop";
 
         databaseCleaner.cleanEventStoreTables(contextName);
         cleanViewstoreTables();
@@ -113,9 +114,7 @@ public class ReplayEventToEventIndexerIT {
 
     private void cleanViewstoreTables() {
 
-        final String contextName = "framework";
-
-        databaseCleaner.cleanViewStoreTables(contextName,
+        databaseCleaner.cleanViewStoreTables(DB_CONTEXT_NAME,
                 "ingredient",
                 "recipe",
                 "cake",
@@ -123,7 +122,7 @@ public class ReplayEventToEventIndexerIT {
                 "processed_event"
         );
 
-        databaseCleaner.cleanStreamBufferTable(contextName);
-        databaseCleaner.cleanStreamStatusTable(contextName);
+        databaseCleaner.cleanStreamBufferTable(DB_CONTEXT_NAME);
+        databaseCleaner.cleanStreamStatusTable(DB_CONTEXT_NAME);
     }
 }

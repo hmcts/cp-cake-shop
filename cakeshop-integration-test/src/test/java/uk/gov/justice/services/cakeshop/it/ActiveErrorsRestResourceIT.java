@@ -4,6 +4,7 @@ import static com.jayway.jsonassert.JsonAssert.with;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.DB_CONTEXT_NAME;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.ACTIVE_STREAM_ERRORS_QUERY_BASE_URI;
 
 import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
@@ -37,9 +38,9 @@ public class ActiveErrorsRestResourceIT {
     public void before() throws Exception {
         client = new RestEasyClientFactory().createResteasyClient();
 
-        databaseCleaner.cleanEventStoreTables("framework");
+        databaseCleaner.cleanEventStoreTables(DB_CONTEXT_NAME);
         databaseCleaner.cleanViewStoreTables(
-                "framework",
+                "cakeshop",
                 "stream_buffer",
                 "stream_status",
                 "stream_error_hash",

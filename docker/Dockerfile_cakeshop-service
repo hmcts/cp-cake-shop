@@ -1,0 +1,35 @@
+#ARG base_image=crmdvrepo01.azurecr.io/wildfly:310122
+
+ARG baseImageTag
+FROM crmdvrepo01.azurecr.io/hmcts/wildfly:${baseImageTag}
+
+ARG version
+ARG repo_loc=https://libraries-internal.mdv.cpp.nonlive/artifactory/repocentral
+ARG framework_libraries_version
+ARG framework_version
+ARG eventstore_version
+ARG wildfly_home=/opt/jboss/wildfly
+ARG wildfly_user=jboss
+
+# service war file
+ADD ${repo_loc}/uk/gov/justice/services/cakeshop-service/${version}/cakeshop-service-${version}.war ${wildfly_home}/standalone/deployments/
+USER root
+RUN chown ${wildfly_user}:${wildfly_user} ${wildfly_home}/standalone/deployments/cakeshop-service-${version}.war
+
+# liquibase jars & config
+RUN mkdir /tmp/liquibase
+ADD ${repo_loc}/uk/gov/justice/services/cakeshop-viewstore-liquibase/${version}/cakeshop-viewstore-liquibase-${version}.jar /tmp/liquibase/cakeshop-viewstore-liquibase.jar
+ADD ${repo_loc}/uk/gov/justice/event-store/event-repository-liquibase/${eventstore_version}/event-repository-liquibase-${eventstore_version}.jar  /tmp/liquibase/event-repository-liquibase.jar
+ADD ${repo_loc}/uk/gov/justice/event-store/aggregate-snapshot-repository-liquibase/${eventstore_version}/aggregate-snapshot-repository-liquibase-${eventstore_version}.jar  /tmp/liquibase/aggregate-snapshot-repository-liquibase.jar
+ADD ${repo_loc}/uk/gov/justice/event-store/event-buffer-liquibase/${eventstore_version}/event-buffer-liquibase-${eventstore_version}.jar  /tmp/liquibase/event-buffer-liquibase.jar
+ADD ${repo_loc}/uk/gov/justice/event-store/event-tracking-liquibase/${eventstore_version}/event-tracking-liquibase-${eventstore_version}.jar  /tmp/liquibase/event-tracking-liquibase.jar
+ADD ${repo_loc}/uk/gov/justice/services/framework-system-liquibase/${framework_version}/framework-system-liquibase-${framework_version}.jar  /tmp/liquibase/framework-system-liquibase.jar
+ADD ${repo_loc}/uk/gov/justice/services/jobstore-liquibase/${framework_libraries_version}/jobstore-liquibase-${framework_libraries_version}.jar  /tmp/liquibase/jobstore-liquibase.jar
+RUN chmod -R 755 /tmp/liquibase
+COPY scripts/liquibase.sh /tmp/liquibase/liquibase.sh
+RUN chown ${wildfly_user}:${wildfly_user} /tmp/liquibase/liquibase.sh && chmod 755 /tmp/liquibase/liquibase.sh
+RUN mkdir /opt/cpp-tools
+ADD ${repo_loc}/uk/gov/justice/services/framework-jmx-command-client/${framework_version}/framework-jmx-command-client-${framework_version}.jar /opt/cpp-tools/framework-jmx-command-client.jar
+RUN chown ${wildfly_user}:${wildfly_user} /opt/cpp-tools/framework-jmx-command-client.jar && chmod 755 /opt/cpp-tools/framework-jmx-command-client.jar
+USER ${wildfly_user}
+LABEL base_image ${baseImageTag}

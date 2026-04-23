@@ -11,7 +11,7 @@ import uk.gov.justice.services.cakeshop.domain.event.CakeOrdered;
 import uk.gov.justice.services.common.converter.jackson.ObjectMapperProducer;
 
 import java.io.IOException;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -42,7 +42,7 @@ public class EventFactoryTest {
 
         assertThat(cakeOrdered.getOrderId(), is(UUID.fromString("163af847-effb-46a9-96bc-32a0f7526f22")));
         assertThat(cakeOrdered.getRecipeId(), is(UUID.fromString("163af847-effb-46a9-96bc-32a0f7526f23")));
-        assertThat(cakeOrdered.getDeliveryDate(), is(ZonedDateTime.of(2016, 01, 14, 18, 15, 3, 123, ZoneId.of("UTC"))));
+        assertThat(cakeOrdered.getDeliveryDate().toInstant(), is(ZonedDateTime.of(2016, 01, 14, 18, 15, 3, 123, ZoneOffset.UTC).toInstant()));
 
     }
 

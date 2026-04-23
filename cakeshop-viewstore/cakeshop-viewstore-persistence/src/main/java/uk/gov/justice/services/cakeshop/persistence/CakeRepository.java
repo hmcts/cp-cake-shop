@@ -1,13 +1,29 @@
 package uk.gov.justice.services.cakeshop.persistence;
 
-
 import uk.gov.justice.services.cakeshop.persistence.entity.Cake;
 
+import java.util.List;
 import java.util.UUID;
 
-import org.apache.deltaspike.data.api.EntityRepository;
-import org.apache.deltaspike.data.api.Repository;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 
-@Repository
-public interface CakeRepository extends EntityRepository<Cake, UUID> {
+@ApplicationScoped
+public class CakeRepository {
+
+    @Inject
+    private EntityManager entityManager;
+
+    public Cake save(final Cake cake) {
+        return entityManager.merge(cake);
+    }
+
+    public Cake findBy(final UUID id) {
+        return entityManager.find(Cake.class, id);
+    }
+
+    public List<Cake> findAll() {
+        return entityManager.createQuery("SELECT c FROM Cake c", Cake.class).getResultList();
+    }
 }

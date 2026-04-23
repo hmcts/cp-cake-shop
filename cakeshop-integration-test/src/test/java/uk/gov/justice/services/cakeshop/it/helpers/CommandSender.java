@@ -1,15 +1,15 @@
 package uk.gov.justice.services.cakeshop.it.helpers;
 
-import static javax.ws.rs.core.Response.Status.ACCEPTED;
+import static jakarta.ws.rs.core.Response.Status.ACCEPTED;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 import uk.gov.justice.services.cakeshop.it.params.CakeShopMediaTypes;
 import uk.gov.justice.services.cakeshop.it.params.CakeShopUris;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Response;
 
 public class CommandSender {
 

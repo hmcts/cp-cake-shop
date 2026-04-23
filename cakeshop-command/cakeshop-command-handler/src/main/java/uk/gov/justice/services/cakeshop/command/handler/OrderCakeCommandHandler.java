@@ -13,7 +13,7 @@ import uk.gov.justice.services.messaging.JsonEnvelope;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @ServiceComponent(COMMAND_HANDLER)
 public class OrderCakeCommandHandler {

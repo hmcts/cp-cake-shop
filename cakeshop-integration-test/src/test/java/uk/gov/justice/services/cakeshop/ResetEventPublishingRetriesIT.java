@@ -30,10 +30,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -82,7 +82,7 @@ public class ResetEventPublishingRetriesIT {
                 component);
 
         final Invocation.Builder request = restEastClient.target(resetRetryCountUri).request();
-        try (final Response response = request.get()) {
+        try (final Response response = request.put(Entity.json(""))) {
             assertThat(response.getStatus(), is(200));
 
             final String json = response.readEntity(String.class);
@@ -112,7 +112,7 @@ public class ResetEventPublishingRetriesIT {
                 component);
 
         final Invocation.Builder request = restEastClient.target(resetRetryCountUri).request();
-        try (final Response response = request.get()) {
+        try (final Response response = request.put(Entity.json(""))) {
             assertThat(response.getStatus(), is(400));
 
             final String json = response.readEntity(String.class);

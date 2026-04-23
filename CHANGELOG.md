@@ -4,11 +4,22 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [21.0.0-SNAPSHOT] - 2026-03-26
 ### Changed
+- Upgraded to Java 21 and Jakarta EE 10
+- Updated WildFly from `26.1.2.Final` to `32.0.1.Final` and WildFly Maven plugin from `4.1.1.Final` to `4.2.2.Final`
+- Removed `WEB-INF/web.xml` — JAX-RS Application subclasses are now discovered purely via `@ApplicationPath` annotations; WildFly's JAX-RS subsystem registers servlet mappings automatically
+- Replaced `javax.persistence:javax.persistence-api:2.2` with `jakarta.persistence:jakarta.persistence-api:3.1.0`
+- Replaced `javax.annotation:javax.annotation-api:1.3.2` with `jakarta.annotation:jakarta.annotation-api:2.1.1`
+- Migrated `javax.persistence.metamodel.*` to `jakarta.persistence.metamodel.*` in `Recipe_.java` static metamodel
+- Updated to framework `21.0.0-SNAPSHOT`; IT tests now run using the pull mechanism; pull mechanism now has retries for failed events
 - Reset database state before each test through junit5 extension
-- Updated to framework 17.105.x
-- IT tests now run using the new pull mechanism in the framework
-- Pull mechanism now has retries for failed events
+### Fixed
+- Replaced all occurrences of non-existent `javax:javaee-api:7.0` plugin dependency with `jakarta.platform:jakarta.jakartaee-api:10.0.0` across root `pom.xml`, `cakeshop-command-api`, and `cakeshop-event` POMs
+- Fixed `ServiceConfigurationError: Provider javax.json.spi.JsonProvider not found` in all code generator plugins by excluding `org.glassfish:javax.json` and adding Jakarta JSON-P runtime stack (`parsson:1.1.0`, `org.glassfish:jakarta.json:2.0.1`, `jackson-datatype-jakarta-jsonp:2.14.2`) to each plugin classpath
+- Replaced `javax.xml.bind:jaxb-api:2.3.1` with `jakarta.xml.bind:jakarta.xml.bind-api:4.0.0` in `raml-maven-plugin` classpath
+- Disabled `maven-processor-plugin` annotation processing in `cakeshop-viewstore-persistence` (`hibernate-jpamodelgen:4.3.11.Final` does not support `@jakarta.persistence.Entity`); added manually maintained `Recipe_.java` static metamodel
 
 ## [17.104.0] - 2025-12-16
 ### Changed

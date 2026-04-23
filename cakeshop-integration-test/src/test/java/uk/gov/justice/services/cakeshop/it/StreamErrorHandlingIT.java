@@ -19,7 +19,7 @@ import uk.gov.justice.services.test.utils.core.messaging.Poller;
 import java.util.Optional;
 
 import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,11 +60,11 @@ public class StreamErrorHandlingIT {
             final StreamErrorOccurrence streamErrorDetails = streamError.streamErrorOccurrence();
             final StreamErrorHash streamErrorHash = streamError.streamErrorHash();
 
-            assertThat(streamErrorHash.exceptionClassName(), is("javax.persistence.PersistenceException"));
+            assertThat(streamErrorHash.exceptionClassName(), is("uk.gov.justice.services.event.buffer.core.repository.subscription.TransactionException"));
             assertThat(streamErrorHash.causeClassName(), is(of("org.postgresql.util.PSQLException")));
-            assertThat(streamErrorHash.javaClassName(), is("uk.gov.justice.services.persistence.EntityManagerFlushInterceptor"));
+            assertThat(streamErrorHash.javaClassName(), is("uk.gov.justice.services.event.sourcing.subscription.manager.TransactionHandler"));
 
-            assertThat(streamErrorDetails.exceptionMessage(), is("org.hibernate.exception.ConstraintViolationException: could not execute statement"));
+            assertThat(streamErrorDetails.exceptionMessage(), is("Failed to commit UserTransaction"));
             assertThat(streamErrorDetails.causeMessage().get(), startsWith("ERROR: null value in column"));
             assertThat(streamErrorDetails.causeMessage().get(), containsString("violates not-null constraint"));
 

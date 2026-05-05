@@ -10,9 +10,9 @@ import uk.gov.justice.services.unifiedsearch.UnifiedSearchIndexer;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.json.JsonObject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 
 @ApplicationScoped
 public class DummyUnifiedSearchIndexer implements UnifiedSearchIndexer {

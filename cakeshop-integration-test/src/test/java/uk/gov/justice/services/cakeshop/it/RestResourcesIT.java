@@ -24,6 +24,7 @@ import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERR
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BY_ERROR_ID_URI_TEMPLATE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.STREAM_ERRORS_QUERY_BY_STREAM_ID_URI_TEMPLATE;
 
+import jakarta.json.JsonValue;
 import uk.gov.justice.services.cakeshop.it.helpers.DatabaseManager;
 import uk.gov.justice.services.cakeshop.it.helpers.LinkedEventInserter;
 import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
@@ -31,7 +32,7 @@ import uk.gov.justice.services.cakeshop.it.helpers.TestDataManager;
 import uk.gov.justice.services.common.converter.jackson.ObjectMapperProducer;
 import uk.gov.justice.services.event.buffer.core.repository.streamerror.StreamError;
 import uk.gov.justice.services.eventsourcing.discovery.DiscoveryResult;
-import uk.gov.justice.services.eventsourcing.repository.jdbc.discovery.StreamPosition;
+import uk.gov.justice.services.eventsourcing.repository.jdbc.event.StreamPosition;
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.LinkedEvent;
 import uk.gov.justice.services.messaging.DefaultJsonObjectEnvelopeConverter;
 import uk.gov.justice.services.messaging.JsonEnvelope;
@@ -46,9 +47,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -202,7 +203,7 @@ public class RestResourcesIT {
                 var actualResponse = response.readEntity(String.class);
                 assertThat(read(actualResponse, "$[0].streamErrorOccurrence.causeMessage"), containsString("violates not-null constraint"));
                 assertThat(read(actualResponse, "$[0].streamErrorOccurrence.eventId"), notNullValue());
-                assertThat(read(actualResponse, "$[0].streamErrorOccurrence.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));
+                assertThat(read(actualResponse, "$[0].streamErrorOccurrence.fullStackTrace"), containsString("org.hibernate.exception.ConstraintViolationException:"));
             }
 
             final Invocation.Builder byErrorHashRequest = client.target(STREAM_ERRORS_QUERY_BY_ERROR_ID_URI_TEMPLATE.formatted(errorId)).request();
@@ -211,7 +212,7 @@ public class RestResourcesIT {
                 var actualResponse = response.readEntity(String.class);
                 assertThat(read(actualResponse, "$[0].streamErrorOccurrence.causeMessage"), containsString("violates not-null constraint"));
                 assertThat(read(actualResponse, "$[0].streamErrorOccurrence.eventId"), notNullValue());
-                assertThat(read(actualResponse, "$[0].streamErrorOccurrence.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));
+                assertThat(read(actualResponse, "$[0].streamErrorOccurrence.fullStackTrace"), containsString("org.hibernate.exception.ConstraintViolationException:"));
             }
         }
 

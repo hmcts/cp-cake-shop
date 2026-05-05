@@ -4,11 +4,21 @@ import uk.gov.justice.services.cakeshop.persistence.entity.CakeOrder;
 
 import java.util.UUID;
 
-import org.apache.deltaspike.data.api.EntityRepository;
-import org.apache.deltaspike.data.api.Repository;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 
-@Repository
-public interface CakeOrderRepository extends EntityRepository<CakeOrder, UUID> {
+@ApplicationScoped
+public class CakeOrderRepository {
 
+    @Inject
+    private EntityManager entityManager;
 
+    public CakeOrder save(final CakeOrder cakeOrder) {
+        return entityManager.merge(cakeOrder);
+    }
+
+    public CakeOrder findBy(final UUID id) {
+        return entityManager.find(CakeOrder.class, id);
+    }
 }

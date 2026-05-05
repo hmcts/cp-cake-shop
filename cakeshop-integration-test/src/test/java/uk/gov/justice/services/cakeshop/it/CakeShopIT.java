@@ -4,11 +4,11 @@ import static com.jayway.jsonassert.JsonAssert.with;
 import static java.time.Duration.ofSeconds;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
-import static javax.json.Json.createArrayBuilder;
-import static javax.json.Json.createObjectBuilder;
-import static javax.ws.rs.client.Entity.entity;
-import static javax.ws.rs.core.Response.Status.ACCEPTED;
-import static javax.ws.rs.core.Response.Status.OK;
+import static jakarta.json.Json.createArrayBuilder;
+import static jakarta.json.Json.createObjectBuilder;
+import static jakarta.ws.rs.client.Entity.entity;
+import static jakarta.ws.rs.core.Response.Status.ACCEPTED;
+import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -37,11 +37,11 @@ import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventJdbcRepo
 import uk.gov.justice.services.eventsourcing.repository.jdbc.event.EventRepositoryFactory;
 import java.util.Optional;
 
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.Session;
 import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.message.BasicNameValuePair;

@@ -1,22 +1,193 @@
-[![Coverage Status](https://coveralls.io/repos/github/hmcts/cp-cake-shop/badge.svg?branch=main)](https://coveralls.io/github/hmcts/cp-cake-shop?branch=main)
+# cp-cake-shop
 
+Reference implementation of the **Criminal Practice Platform (CPP)** CQRS / Event Sourcing framework. It is a fully working service — a cake shop — built using every framework pattern (commands, aggregates, domain events, event listeners, query views, viewstore). New framework developers read this project to understand how all the pieces fit together, and the integration-test suite acts as a regression harness for the framework itself.
 
-# cake-shop
+---
 
-## How deployment works?
-Unlike other contexts, this cakeshop project uses a different approach as this belong to framework (github). Integration tests of this component gets executed in CI pipeline which runs
-in travis. So, to get this working in travis pipeline this component gets deployed to embedded wildfly using maven plugin and then ITs are executed against embedded wildfly instance.
-All this is setup through integration-test module's pom.xml. Artemis runs as embedded broker in wildfly. Spinning up embedded wildfly uses random ports approach i.e. free ports are selected by maven plugin
-and then those ports are used to spin up required services and this is necessary to avoid port clash with local dev environment, so that there is no requirement to shutdown local dev environment
-before running build on this component. There is a separate version of standalone.xml file in integration-test module that is used for embedded wildfly instance
+## Position in the dependency hierarchy
 
-By running `mvn clean install` basically it builds the project and deploys service war file to embedded wildfly instance and then runs all Integration tests. While running 
+```
+cp-maven-parent-pom
+└── cp-maven-framework-parent-pom   ← direct parent POM
+    ├── cp-microservice-framework   ← core runtime (adapters, messaging, interceptors)
+    ├── cp-event-store              ← event sourcing implementation
+    └── cp-framework-libraries      ← shared utilities, test helpers
+```
 
-One issue with above approach is, it's bit hard to debug any integration tests from IDE (it's not impossible but requires little bit of tweaks to setup process). In order to support
-debugging ITs this application can also be deployed to local dev environment using this [script](runIntegrationTests.sh). This script builds application without any tests and deploys service war file to
-local dev environment. Until other contexts this script is not going to run any integration tests. Once application is deployed any IT can be run from intellij as normal.
+`cp-cake-shop` sits at the leaf of the framework tier. It consumes `cp-microservice-framework`, `cp-event-store`, and `cp-framework-libraries` — the same dependencies that every `cpp-context-*` production service uses.
 
-Port selection switching logic is incorporated in on the test helper class, so that when a test is run from IDE it returns local dev environment ports, but when tests are run through mvn command
-it returns random ports that are selected by maven plugin for running the application using embedded wildfly.
+**Maven coordinates**
 
+| Property | Value |
+|---|---|
+| `groupId` | `uk.gov.justice.services` |
+| `artifactId` | `cake-shop` |
+| Parent | `uk.gov.justice:maven-framework-parent-pom:${framework.version}` |
 
+---
+
+## Module layout
+
+```
+cp-cake-shop/
+├── cakeshop-domain/                  # DDD domain: Recipe + Order aggregates, domain events
+├── cakeshop-command/
+│   ├── cakeshop-command-api/         # REST POST endpoints (RAML, JSON Schema, Drools ACL)
+│   └── cakeshop-command-handler/     # Command handlers (@Handles + @ServiceComponent)
+├── cakeshop-event/
+│   ├── cakeshop-event-listener/      # Private event listeners — update viewstore
+│   ├── cakeshop-event-processor/     # Public event processor — cross-context events
+│   ├── cakeshop-event-indexer/       # Event indexing listener
+│   └── other-event-listener/         # Demonstrates handling events from another source
+├── cakeshop-query/
+│   ├── cakeshop-query-api/           # REST GET endpoints (RAML, JSON Schema)
+│   └── cakeshop-query-view/          # Query view handlers — read from viewstore
+├── cakeshop-viewstore/
+│   ├── cakeshop-viewstore-persistence/  # JPA repositories (RecipeRepository, CakeRepository …)
+│   └── cakeshop-viewstore-liquibase/    # Liquibase DB migrations
+├── cakeshop-event-source/            # event-sources.yaml classifier JAR
+├── cakeshop-service/                 # WildFly deployment descriptors (WAR)
+├── cakeshop-integration-test/        # Full-stack integration tests
+├── cakeshop-feature-control/         # Feature-flag integration example
+├── cakeshop-healthcheck/             # Health check implementation
+└── cakeshop-custom/                  # Custom interceptor/utility examples
+```
+
+---
+
+## Framework patterns demonstrated
+
+### Command handler
+
+```java
+@ServiceComponent(COMMAND_HANDLER)
+public class RecipeCommandHandler {
+
+    @Inject EventSource eventSource;
+    @Inject AggregateService aggregateService;
+
+    @Handles("cakeshop.command.add-recipe")
+    public void addRecipe(final JsonEnvelope command) throws EventStreamException {
+        final UUID recipeId = getUUID(command.payloadAsJsonObject(), "recipeId").get();
+        final EventStream stream = eventSource.getStreamById(recipeId);
+        final Recipe recipe = aggregateService.get(stream, Recipe.class);
+
+        stream.append(
+            recipe.addRecipe(recipeId, name, glutenFree, ingredients)
+                  .map(toEnvelopeWithMetadataFrom(command)));
+    }
+}
+```
+
+1. Retrieve the event stream for the aggregate's ID.
+2. Reconstitute the aggregate by replaying its stream.
+3. Call the business method — returns a `Stream` of domain events.
+4. Append the events back to the stream.
+
+### Domain aggregate
+
+Aggregates implement `Aggregate`, use the `EventSwitcher.match/when` pattern to apply historical events, and return `Stream<DomainEvent>` from command methods:
+
+```java
+public Stream<DomainEvent> addRecipe(UUID id, String name, boolean glutenFree, List<Ingredient> ingredients) {
+    return apply(Stream.of(new RecipeAdded(id, name, glutenFree, ingredients)));
+}
+```
+
+### Event listener (private — viewstore update)
+
+```java
+@ServiceComponent(EVENT_LISTENER)
+public class RecipeEventListener {
+
+    @Inject RecipeRepository recipeRepository;
+
+    @Handles("cakeshop.events.recipe-added")
+    public void recipeAdded(final JsonEnvelope event) {
+        final RecipeAdded recipeAdded = jsonObjectConverter.convert(
+            event.payloadAsJsonObject(), RecipeAdded.class);
+        recipeRepository.save(recipeAddedToRecipeConverter.convert(recipeAdded));
+    }
+}
+```
+
+Private events follow the naming convention `{context}.events.{event-name}`.
+
+### Query view
+
+Query views are `@ServiceComponent(QUERY_VIEW)` beans annotated with `@Handles` for `{context}.query.*` actions. They read from the viewstore JPA repositories and return a `JsonEnvelope` response.
+
+---
+
+## Data flows
+
+```
+Command (HTTP POST)
+  → cakeshop-command-api    (REST resource, generated by framework)
+  → cakeshop-command-handler (RecipeCommandHandler.addRecipe)
+  → Recipe aggregate         (returns Stream<RecipeAdded>)
+  → Event Store              (appended)
+  → cakeshop-event-listener  (RecipeEventListener.recipeAdded — updates viewstore)
+
+Query (HTTP GET)
+  → cakeshop-query-api
+  → cakeshop-query-view      (reads from viewstore DB)
+```
+
+---
+
+## API definition
+
+APIs are defined with RAML and JSON Schema under `src/raml/`:
+
+| File | Purpose |
+|---|---|
+| `cakeshop-command-api/src/raml/cakeshop-command-api.raml` | Command REST endpoints |
+| `cakeshop-command-handler/src/raml/cakeshop-command-handler.messaging.raml` | JMS handler routing |
+| `cakeshop-query-api/src/raml/cakeshop-query-api.raml` | Query REST endpoints |
+
+Access control rules are Drools `.drl` files in `cakeshop-command-api/src/main/resources/.../accesscontrol/`. All requests require a `CJSCPPUID` header.
+
+---
+
+## Build
+
+```bash
+# Full build including unit tests
+mvn clean install
+
+# Skip tests
+mvn clean install -DskipTests
+
+# Build a specific module and its dependencies
+mvn clean install -pl cakeshop-command-handler -am
+```
+
+---
+
+## Integration tests
+
+Integration tests require a running Docker environment (PostgreSQL, WildFly, Artemis). Use the provided script:
+
+```bash
+./runIntegrationTests.sh
+```
+
+This script builds the project, deploys the WAR to the local WildFly container, and runs the full integration-test suite in `cakeshop-integration-test`.
+
+To run a single test from IntelliJ after the WAR is deployed: run the IT class directly — the test helpers detect the local dev environment and use its ports automatically.
+
+### Infrastructure ports (from `cpp-developers-docker`)
+
+| Service | Port |
+|---|---|
+| PostgreSQL 11 | 5432 |
+| WildFly 32 | 9080 (HTTP), 8787 (debug), 9990 (admin) |
+| Artemis JMS | 61616, 8161 (console) |
+| HAProxy | 8080 |
+
+---
+
+## Event sources
+
+`cakeshop-event-source` produces a classifier JAR (`yaml`) containing `event-sources.yaml`, which is consumed by the framework's `messaging-adapter-generator-plugin` at build time. This is the standard pattern used by all context services.

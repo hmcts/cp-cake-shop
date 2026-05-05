@@ -4,7 +4,7 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.UUID.fromString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static uk.gov.justice.services.cakeshop.it.helpers.TestConstants.CONTEXT_NAME;
 import static uk.gov.justice.services.eventstore.management.commands.ReplayEventToEventListenerCommand.REPLAY_EVENT_TO_EVENT_LISTENER;
 import static uk.gov.justice.services.jmx.api.mbean.CommandRunMode.GUARDED;

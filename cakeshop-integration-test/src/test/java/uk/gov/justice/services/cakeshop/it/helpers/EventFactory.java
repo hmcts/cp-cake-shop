@@ -1,12 +1,12 @@
 package uk.gov.justice.services.cakeshop.it.helpers;
 
-import static javax.json.Json.createArrayBuilder;
-import static javax.json.Json.createObjectBuilder;
-import static javax.ws.rs.client.Entity.entity;
+import static jakarta.json.Json.createArrayBuilder;
+import static jakarta.json.Json.createObjectBuilder;
+import static jakarta.ws.rs.client.Entity.entity;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopMediaTypes.ADD_RECIPE_MEDIA_TYPE;
 import static uk.gov.justice.services.cakeshop.it.params.CakeShopMediaTypes.RENAME_RECIPE_MEDIA_TYPE;
 
-import javax.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Entity;
 
 public class EventFactory {
 

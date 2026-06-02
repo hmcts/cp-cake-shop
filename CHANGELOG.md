@@ -5,7 +5,7 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 ## [Unreleased]
 
-## [21.0.0-SNAPSHOT] - 2026-03-26
+## [21.0.0-M1] - 2026-06-02
 ### Changed
 - Upgraded to Java 21 and Jakarta EE 10
 - Updated WildFly from `26.1.2.Final` to `32.0.1.Final` and WildFly Maven plugin from `4.1.1.Final` to `4.2.2.Final`

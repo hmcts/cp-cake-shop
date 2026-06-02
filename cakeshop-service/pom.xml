@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.gov.justice.services</groupId>
         <artifactId>cake-shop</artifactId>
-        <version>17.104.3-SNAPSHOT</version>
+        <version>21.0.0-M1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -115,7 +115,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-
         <!-- Test Dependencies -->
         <dependency>
             <groupId>uk.gov.justice.utils</groupId>

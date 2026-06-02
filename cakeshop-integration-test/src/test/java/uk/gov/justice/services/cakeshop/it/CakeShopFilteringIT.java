@@ -5,7 +5,7 @@ import static com.jayway.jsonassert.JsonAssert.with;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
-import static javax.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -18,7 +18,7 @@ import uk.gov.justice.services.cakeshop.it.helpers.EventFactory;
 import uk.gov.justice.services.cakeshop.it.helpers.Querier;
 import uk.gov.justice.services.cakeshop.it.helpers.RestEasyClientFactory;
 
-import javax.ws.rs.client.Client;
+import jakarta.ws.rs.client.Client;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.jupiter.api.AfterEach;

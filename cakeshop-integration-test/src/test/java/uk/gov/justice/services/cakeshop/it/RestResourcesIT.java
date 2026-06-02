@@ -3,9 +3,9 @@ package uk.gov.justice.services.cakeshop.it;
 import java.util.Optional;
 import java.util.UUID;
 import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -173,7 +173,7 @@ public class RestResourcesIT {
                 var actualResponse = response.readEntity(String.class);
                 assertThat(read(actualResponse, "$[0].streamErrorDetails.causeMessage"), containsString("violates not-null constraint"));
                 assertThat(read(actualResponse, "$[0].streamErrorDetails.eventId"), notNullValue());
-                assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));
+                assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("ConstraintViolationException"));
             }
 
             final Invocation.Builder byErrorHashRequest = client.target(STREAM_ERRORS_QUERY_BY_ERROR_ID_URI_TEMPLATE.formatted(errorId)).request();
@@ -182,7 +182,7 @@ public class RestResourcesIT {
                 var actualResponse = response.readEntity(String.class);
                 assertThat(read(actualResponse, "$[0].streamErrorDetails.causeMessage"), containsString("violates not-null constraint"));
                 assertThat(read(actualResponse, "$[0].streamErrorDetails.eventId"), notNullValue());
-                assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("javax.persistence.PersistenceException:"));
+                assertThat(read(actualResponse, "$[0].streamErrorDetails.fullStackTrace"), containsString("ConstraintViolationException"));
             }
         }
 

@@ -2,8 +2,8 @@ package uk.gov.justice.services.cakeshop.it.helpers;
 
 import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
-import static javax.json.Json.createArrayBuilder;
-import static javax.json.Json.createObjectBuilder;
+import static jakarta.json.Json.createArrayBuilder;
+import static jakarta.json.Json.createObjectBuilder;
 import static uk.gov.justice.services.messaging.JsonEnvelope.metadataBuilder;
 
 import uk.gov.justice.services.common.util.Clock;
@@ -14,7 +14,7 @@ import uk.gov.justice.services.messaging.Metadata;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import javax.json.JsonArrayBuilder;
+import jakarta.json.JsonArrayBuilder;
 
 
 public class CakeshopEventGenerator {

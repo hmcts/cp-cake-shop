@@ -4,11 +4,11 @@ import static java.lang.String.format;
 
 import uk.gov.justice.services.messaging.JsonEnvelope;
 
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.jms.Topic;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
+import jakarta.jms.Topic;
 
 public class EfficientEventSender implements AutoCloseable {
 

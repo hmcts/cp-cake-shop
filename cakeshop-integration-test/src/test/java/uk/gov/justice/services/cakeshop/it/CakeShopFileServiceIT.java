@@ -4,10 +4,10 @@ import static com.google.common.io.Resources.getResource;
 import static com.jayway.jsonassert.JsonAssert.with;
 import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
-import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
-import static javax.ws.rs.core.Response.Status.ACCEPTED;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static javax.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
+import static jakarta.ws.rs.core.Response.Status.ACCEPTED;
+import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
+import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.apache.commons.io.IOUtils.contentEquals;
 import static org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM;
 import static org.apache.http.entity.mime.HttpMultipartMode.BROWSER_COMPATIBLE;
@@ -37,8 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.sql.DataSource;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Invocation;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

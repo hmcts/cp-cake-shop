@@ -7,7 +7,7 @@ import uk.gov.justice.services.core.annotation.Handles;
 import uk.gov.justice.services.core.annotation.ServiceComponent;
 import uk.gov.justice.services.messaging.Envelope;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @ServiceComponent(value = Component.EVENT_LISTENER)
 public class CakeMadeEventListener {

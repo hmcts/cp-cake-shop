@@ -8,9 +8,9 @@ import uk.gov.justice.services.core.featurecontrol.domain.Feature;
 
 import java.util.List;
 
-import javax.annotation.Priority;
-import javax.enterprise.inject.Alternative;
-import javax.inject.Inject;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.inject.Inject;
 
 import org.slf4j.Logger;
 

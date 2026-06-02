@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.gov.justice.services</groupId>
         <artifactId>cake-shop</artifactId>
-        <version>17.104.3-SNAPSHOT</version>
+        <version>21.0.0-M1-SNAPSHOT</version>
     </parent>
     <artifactId>cakeshop-integration-test</artifactId>
 
@@ -14,8 +14,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -99,7 +99,6 @@
         <dependency>
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-client-all</artifactId>
-            <version>${wildfly.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.justice.event-store</groupId>
@@ -164,8 +163,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

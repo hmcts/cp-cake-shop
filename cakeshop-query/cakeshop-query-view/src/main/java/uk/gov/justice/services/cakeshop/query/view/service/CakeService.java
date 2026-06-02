@@ -7,7 +7,7 @@ import uk.gov.justice.services.cakeshop.persistence.CakeRepository;
 import uk.gov.justice.services.cakeshop.query.view.response.CakeView;
 import uk.gov.justice.services.cakeshop.query.view.response.CakesView;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class CakeService {
 

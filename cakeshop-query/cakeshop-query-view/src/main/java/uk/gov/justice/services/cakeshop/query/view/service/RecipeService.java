@@ -11,7 +11,7 @@ import uk.gov.justice.services.cakeshop.query.view.response.RecipesView;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Service to manage {@link Recipe}.

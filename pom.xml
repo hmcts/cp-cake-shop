@@ -5,14 +5,13 @@
     <parent>
         <groupId>uk.gov.justice</groupId>
         <artifactId>maven-framework-parent-pom</artifactId>
-        <version>17.101.0</version>
+        <version>21.0.0-M1-SNAPSHOT</version>
     </parent>
 
     <groupId>uk.gov.justice.services</groupId>
     <artifactId>cake-shop</artifactId>
-    <version>17.104.3-SNAPSHOT</version>
+    <version>21.0.0-M1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    
 
     <name>Cakeshop Application</name>
     <description>cakeshop application for Microservice Framework</description>
@@ -44,13 +43,12 @@
         <plugins.maven.jgitflow.version>1.0-m5.1</plugins.maven.jgitflow.version>
         <jgitflow.maven.developBranchName>main</jgitflow.maven.developBranchName>
         <pushReleases>true</pushReleases>
-        <wildfly.version>26.1.2.Final</wildfly.version>
-        <wildfly.maven.plugin.version>4.1.1.Final</wildfly.maven.plugin.version>
+        <wildfly.maven.plugin.version>4.2.2.Final</wildfly.maven.plugin.version>
 
-        <file-service.version>17.103.0</file-service.version>
-        <framework-libraries.version>17.104.0</framework-libraries.version>
-        <framework.version>17.104.0</framework.version>
-        <event-store.version>17.104.1-M1</event-store.version>
+        <file-service.version>21.0.0-M1-SNAPSHOT</file-service.version>
+        <framework-libraries.version>21.0.0-M1-SNAPSHOT</framework-libraries.version>
+        <framework.version>21.0.0-M1-SNAPSHOT</framework.version>
+        <event-store.version>21.0.0-M1-SNAPSHOT</event-store.version>
     </properties>
 
     <dependencyManagement>
@@ -63,13 +61,35 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>uk.gov.justice.artemis</groupId>
-                <artifactId>embedded-artemis</artifactId>
-                <version>${framework-libraries.version}</version>
-                <scope>test</scope>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${persistence-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta.annotation-api.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <resources>
@@ -150,9 +170,9 @@
                             <version>${framework.version}</version>
                         </dependency>
                         <dependency>
-                            <groupId>javax</groupId>
-                            <artifactId>javaee-api</artifactId>
-                            <version>7.0</version>
+                            <groupId>jakarta.platform</groupId>
+                            <artifactId>jakarta.jakartaee-api</artifactId>
+                            <version>${jee.api.version}</version>
                             <scope>runtime</scope>
                         </dependency>
                     </dependencies>
@@ -215,6 +235,11 @@
                             <groupId>uk.gov.justice.maven.generator</groupId>
                             <artifactId>parser-common</artifactId>
                             <version>${framework-libraries.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.fasterxml.jackson.datatype</groupId>
+                            <artifactId>jackson-datatype-jakarta-jsonp</artifactId>
+                            <version>${jackson-datatype-jakarta-jsonp.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -342,10 +367,15 @@
                                 <version>${framework.version}</version>
                             </dependency>
                             <dependency>
-                                <groupId>javax</groupId>
-                                <artifactId>javaee-api</artifactId>
-                                <version>7.0</version>
+                                <groupId>jakarta.platform</groupId>
+                                <artifactId>jakarta.jakartaee-api</artifactId>
+                                <version>${jee.api.version}</version>
                                 <scope>runtime</scope>
+                            </dependency>
+                            <dependency>
+                                <groupId>jakarta.xml.bind</groupId>
+                                <artifactId>jakarta.xml.bind-api</artifactId>
+                                <version>${jakarta.xml.bind-api.version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -462,6 +492,11 @@
                                 <artifactId>generator-raml-parser</artifactId>
                                 <version>${framework-libraries.version}</version>
                             </dependency>
+                            <dependency>
+                                <groupId>com.fasterxml.jackson.datatype</groupId>
+                                <artifactId>jackson-datatype-jakarta-jsonp</artifactId>
+                                <version>${jackson-datatype-jakarta-jsonp.version}</version>
+                            </dependency>
                         </dependencies>
                     </plugin>
                     <!-- rest-adapter-generator-plugin: Generates Rest Resource related classes -->
@@ -498,14 +533,38 @@
                         </executions>
                         <dependencies>
                             <dependency>
-                                <groupId>javax</groupId>
-                                <artifactId>javaee-api</artifactId>
-                                <version>${javaee-api.version}</version>
+                                <groupId>jakarta.platform</groupId>
+                                <artifactId>jakarta.jakartaee-api</artifactId>
+                                <version>${jee.api.version}</version>
+                                <scope>runtime</scope>
                             </dependency>
                             <dependency>
                                 <groupId>uk.gov.justice.framework-generators</groupId>
                                 <artifactId>rest-adapter-generator</artifactId>
                                 <version>${framework.version}</version>
+                                <exclusions>
+                                    <exclusion>
+                                        <groupId>org.glassfish</groupId>
+                                        <artifactId>javax.json</artifactId>
+                                    </exclusion>
+                                </exclusions>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.eclipse.parsson</groupId>
+                                <artifactId>parsson</artifactId>
+                                <version>${parsson.version}</version>
+                                <scope>runtime</scope>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.glassfish</groupId>
+                                <artifactId>jakarta.json</artifactId>
+                                <version>${glassfish-json.version}</version>
+                                <scope>runtime</scope>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.fasterxml.jackson.datatype</groupId>
+                                <artifactId>jackson-datatype-jakarta-jsonp</artifactId>
+                                <version>${jackson-datatype-jakarta-jsonp.version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -546,14 +605,38 @@
                         </executions>
                         <dependencies>
                             <dependency>
-                                <groupId>javax</groupId>
-                                <artifactId>javaee-api</artifactId>
-                                <version>${javaee-api.version}</version>
+                                <groupId>jakarta.platform</groupId>
+                                <artifactId>jakarta.jakartaee-api</artifactId>
+                                <version>${jee.api.version}</version>
+                                <scope>runtime</scope>
                             </dependency>
                             <dependency>
                                 <groupId>uk.gov.justice.framework-generators</groupId>
                                 <artifactId>messaging-adapter-generator</artifactId>
                                 <version>${framework.version}</version>
+                                <exclusions>
+                                    <exclusion>
+                                        <groupId>org.glassfish</groupId>
+                                        <artifactId>javax.json</artifactId>
+                                    </exclusion>
+                                </exclusions>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.eclipse.parsson</groupId>
+                                <artifactId>parsson</artifactId>
+                                <version>${parsson.version}</version>
+                                <scope>runtime</scope>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.glassfish</groupId>
+                                <artifactId>jakarta.json</artifactId>
+                                <version>${glassfish-json.version}</version>
+                                <scope>runtime</scope>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.fasterxml.jackson.datatype</groupId>
+                                <artifactId>jackson-datatype-jakarta-jsonp</artifactId>
+                                <version>${jackson-datatype-jakarta-jsonp.version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>

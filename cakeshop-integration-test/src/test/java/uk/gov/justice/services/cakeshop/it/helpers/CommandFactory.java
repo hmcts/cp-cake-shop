@@ -1,7 +1,7 @@
 package uk.gov.justice.services.cakeshop.it.helpers;
 
-import static javax.json.Json.createArrayBuilder;
-import static javax.json.Json.createObjectBuilder;
+import static jakarta.json.Json.createArrayBuilder;
+import static jakarta.json.Json.createObjectBuilder;
 
 public class CommandFactory {
 

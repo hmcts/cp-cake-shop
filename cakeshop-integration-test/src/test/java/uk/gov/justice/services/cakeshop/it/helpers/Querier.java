@@ -1,7 +1,7 @@
 package uk.gov.justice.services.cakeshop.it.helpers;
 
 import static java.util.Collections.singletonList;
-import static javax.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -18,8 +18,8 @@ import static uk.gov.justice.services.cakeshop.it.params.CakeShopUris.RECIPES_RE
 import java.net.URISyntaxException;
 import java.util.List;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;

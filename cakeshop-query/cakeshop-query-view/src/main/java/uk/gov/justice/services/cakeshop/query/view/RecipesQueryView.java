@@ -16,8 +16,8 @@ import uk.gov.justice.services.messaging.Envelope;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
-import javax.json.JsonObject;
+import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 
 @ServiceComponent(Component.QUERY_VIEW)
 public class RecipesQueryView {

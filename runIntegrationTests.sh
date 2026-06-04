@@ -42,7 +42,7 @@ runLiquibase() {
 
 buildAndDeploy() {
   loginToDockerContainerRegistry
-  buildWars
+  # buildWars  # skipped — already compiled at 25.104.0-M1-SNAPSHOT
   undeployWarsFromDocker
   buildAndStartContainers
   runLiquibase

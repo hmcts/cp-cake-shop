@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.gov.justice.services</groupId>
         <artifactId>cake-shop</artifactId>
-        <version>21.0.0-M1-SNAPSHOT</version>
+        <version>25.104.0-M1-SNAPSHOT</version>
     </parent>
     <artifactId>cakeshop-integration-test</artifactId>
 
@@ -60,13 +60,13 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>org.apache.activemq</groupId>
+                    <groupId>org.apache.artemis</groupId>
                     <artifactId>artemis-jms-client</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
+            <groupId>org.apache.artemis</groupId>
             <artifactId>artemis-jms-client</artifactId>
             <scope>test</scope>
         </dependency>

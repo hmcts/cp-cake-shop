@@ -5,12 +5,12 @@
     <parent>
         <groupId>uk.gov.justice</groupId>
         <artifactId>maven-framework-parent-pom</artifactId>
-        <version>21.0.0-M1-SNAPSHOT</version>
+        <version>25.104.0-M1-SNAPSHOT</version>
     </parent>
 
     <groupId>uk.gov.justice.services</groupId>
     <artifactId>cake-shop</artifactId>
-    <version>21.0.0-M1-SNAPSHOT</version>
+    <version>25.104.0-M1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Cakeshop Application</name>
@@ -45,10 +45,20 @@
         <pushReleases>true</pushReleases>
         <wildfly.maven.plugin.version>4.2.2.Final</wildfly.maven.plugin.version>
 
-        <file-service.version>21.0.0-M1-SNAPSHOT</file-service.version>
-        <framework-libraries.version>21.0.0-M1-SNAPSHOT</framework-libraries.version>
-        <framework.version>21.0.0-M1-SNAPSHOT</framework.version>
-        <event-store.version>21.0.0-M1-SNAPSHOT</event-store.version>
+        <file-service.version>25.104.0-M1-SNAPSHOT</file-service.version>
+        <framework-libraries.version>25.104.0-M1-SNAPSHOT</framework-libraries.version>
+        <framework.version>25.104.0-M1-SNAPSHOT</framework.version>
+        <event-store.version>25.104.0-M1-SNAPSHOT</event-store.version>
+        <!--
+            jakarta.xml.bind-api is managed by the BOM at 4.0.0 (Jakarta EE 10,
+            namespace jakarta.xml.bind.*). The RAML parser (org.raml:raml-parser)
+            uses javax.xml.bind.* classes internally. Those classes only exist in
+            versions 2.x of jakarta.xml.bind-api (before the EE 9 namespace change).
+            Any plugin that uses the RAML parser must pin its runtime classpath
+            to ${jakarta.xml.bind-api.raml.version} to avoid NoClassDefFoundError on
+            javax/xml/bind/SchemaOutputResolver. DO NOT upgrade to 3.x or 4.x.
+        -->
+        <jakarta.xml.bind-api.raml.version>2.3.2</jakarta.xml.bind-api.raml.version>
     </properties>
 
     <dependencyManagement>
@@ -174,6 +184,12 @@
                             <artifactId>jakarta.jakartaee-api</artifactId>
                             <version>${jee.api.version}</version>
                             <scope>runtime</scope>
+                        </dependency>
+                        <dependency>
+                            <!-- Pinned to ${jakarta.xml.bind-api.raml.version} (pre-EE9): org.raml:raml-parser uses javax.xml.bind.* which is only present in jakarta.xml.bind-api 2.x. See root pom for full explanation. -->
+                            <groupId>jakarta.xml.bind</groupId>
+                            <artifactId>jakarta.xml.bind-api</artifactId>
+                            <version>${jakarta.xml.bind-api.raml.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -373,9 +389,10 @@
                                 <scope>runtime</scope>
                             </dependency>
                             <dependency>
+                                <!-- Pinned to ${jakarta.xml.bind-api.raml.version} (pre-EE9): org.raml:raml-parser uses javax.xml.bind.* which is only present in jakarta.xml.bind-api 2.x. See root pom for full explanation. -->
                                 <groupId>jakarta.xml.bind</groupId>
                                 <artifactId>jakarta.xml.bind-api</artifactId>
-                                <version>${jakarta.xml.bind-api.version}</version>
+                                <version>${jakarta.xml.bind-api.raml.version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -566,6 +583,12 @@
                                 <artifactId>jackson-datatype-jakarta-jsonp</artifactId>
                                 <version>${jackson-datatype-jakarta-jsonp.version}</version>
                             </dependency>
+                            <dependency>
+                                <!-- Pinned to ${jakarta.xml.bind-api.raml.version} (pre-EE9): org.raml:raml-parser uses javax.xml.bind.* which is only present in jakarta.xml.bind-api 2.x. See root pom for full explanation. -->
+                                <groupId>jakarta.xml.bind</groupId>
+                                <artifactId>jakarta.xml.bind-api</artifactId>
+                                <version>${jakarta.xml.bind-api.raml.version}</version>
+                            </dependency>
                         </dependencies>
                     </plugin>
                     <!-- messaging-adapter-generator-plugin: Generates JmsListener, JmsLoggerMetadataInterceptor, JmsHandlerDestinationNameProvider -->
@@ -637,6 +660,12 @@
                                 <groupId>com.fasterxml.jackson.datatype</groupId>
                                 <artifactId>jackson-datatype-jakarta-jsonp</artifactId>
                                 <version>${jackson-datatype-jakarta-jsonp.version}</version>
+                            </dependency>
+                            <dependency>
+                                <!-- Pinned to ${jakarta.xml.bind-api.raml.version} (pre-EE9): org.raml:raml-parser uses javax.xml.bind.* which is only present in jakarta.xml.bind-api 2.x. See root pom for full explanation. -->
+                                <groupId>jakarta.xml.bind</groupId>
+                                <artifactId>jakarta.xml.bind-api</artifactId>
+                                <version>${jakarta.xml.bind-api.raml.version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>

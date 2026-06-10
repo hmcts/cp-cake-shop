@@ -3,7 +3,7 @@
     <parent>
         <artifactId>cakeshop-command</artifactId>
         <groupId>uk.gov.justice.services</groupId>
-        <version>21.0.0-M1-SNAPSHOT</version>
+        <version>25.104.0-M1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -145,6 +145,12 @@
                         <groupId>com.fasterxml.jackson.datatype</groupId>
                         <artifactId>jackson-datatype-jakarta-jsonp</artifactId>
                         <version>${jackson-datatype-jakarta-jsonp.version}</version>
+                    </dependency>
+                    <dependency>
+                        <!-- Pinned to ${jakarta.xml.bind-api.raml.version} (pre-EE9): org.raml:raml-parser uses javax.xml.bind.* which is only present in jakarta.xml.bind-api 2.x. See root pom for full explanation. -->
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                        <version>${jakarta.xml.bind-api.raml.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

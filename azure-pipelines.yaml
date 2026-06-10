@@ -24,7 +24,7 @@ resources:
 pool:
   name: "MDV-ADO-AGENT-AKS-01"
   demands:
-    - identifier -equals ubuntu-j21
+    - identifier -equals ubuntu-j25-postgres
 
 variables:
   sonarqubeProject: "uk.gov.justice.cakeshop"

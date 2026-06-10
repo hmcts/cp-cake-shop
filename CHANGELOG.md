@@ -5,7 +5,15 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 ## [Unreleased]
 
-## [21.0.0-SNAPSHOT] - 2026-03-26
+## [25.104.0-M1] - 2026-06-09
+### Changed
+- Updated parent `maven-framework-parent-pom` to `25.104.0-M3`
+- Updated `framework.version` to `25.104.0-M1`, `framework-libraries.version` to `25.104.0-M6`, `event-store.version` to `25.104.0-M1`, `file-service.version` to `25.104.0-M3`
+- Azure pipeline agent: `ubuntu-j21` → `ubuntu-j25-postgres`
+- WildFly upgraded to `40.0.0.Final`; Docker image uses multi-stage build on `eclipse-temurin:25-jdk-noble`
+- Pinned `liquibase-maven-plugin` to `4.30.0` (`4.24`–`4.29` fail with a class init error on `LOG_FORMAT`; `4.30.0` restores the stable API)
+
+## [21.0.0-M1] - 2026-06-02
 ### Changed
 - Upgraded to Java 21 and Jakarta EE 10
 - Updated WildFly from `26.1.2.Final` to `32.0.1.Final` and WildFly Maven plugin from `4.1.1.Final` to `4.2.2.Final`

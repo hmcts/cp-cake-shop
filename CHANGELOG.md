@@ -4,6 +4,12 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Updated `framework.version` to `25.104.0-M3` (brings the relocated `persistence-jpa` module — the event-stream self-healing `EntityManagerFlushInterceptor` and `EntityManagerProducer`), `event-store.version` to `25.104.0-M4`, and parent `maven-framework-parent-pom` to `25.104.0-M7`
+- `cakeshop-viewstore-persistence` now depends on `persistence-jpa`, delivering the flush interceptor and EntityManager producer into the service WARs
+
+### Fixed
+- `StreamErrorHandlingIT` restored to assert the event-processing constraint violation is caught in-chain by `uk.gov.justice.services.persistence.EntityManagerFlushInterceptor` (Hibernate 6 surfaces `org.hibernate.exception.ConstraintViolationException` directly rather than wrapping it) — re-establishing coverage of the event-stream self-healing error capture that regressed when the flush interceptor was lost
 
 ## [25.104.0-M1] - 2026-06-09
 ### Changed

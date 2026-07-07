@@ -70,11 +70,11 @@ public class StreamErrorHandlingIT {
             final StreamErrorDetails streamErrorDetails = streamError.streamErrorDetails();
             final StreamErrorHash streamErrorHash = streamError.streamErrorHash();
 
-            assertThat(streamErrorHash.exceptionClassName(), is("uk.gov.justice.services.event.buffer.core.repository.subscription.TransactionException"));
+            assertThat(streamErrorHash.exceptionClassName(), is("org.hibernate.exception.ConstraintViolationException"));
             assertThat(streamErrorHash.causeClassName(), is(of("org.postgresql.util.PSQLException")));
-            assertThat(streamErrorHash.javaClassName(), is("uk.gov.justice.services.event.sourcing.subscription.manager.TransactionHandler"));
+            assertThat(streamErrorHash.javaClassName(), is("uk.gov.justice.services.persistence.EntityManagerFlushInterceptor"));
 
-            assertThat(streamErrorDetails.exceptionMessage(), is("Failed to commit UserTransaction"));
+            assertThat(streamErrorDetails.exceptionMessage(), startsWith("could not execute statement"));
             assertThat(streamErrorDetails.causeMessage().get(), startsWith("ERROR: null value in column"));
             assertThat(streamErrorDetails.causeMessage().get(), containsString("violates not-null constraint"));
 

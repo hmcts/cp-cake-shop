@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.gov.justice</groupId>
         <artifactId>maven-framework-parent-pom</artifactId>
-        <version>25.104.0-M3</version>
+        <version>25.104.0-M7</version>
     </parent>
 
     <groupId>uk.gov.justice.services</groupId>
@@ -47,8 +47,8 @@
 
         <file-service.version>25.104.0-M3</file-service.version>
         <framework-libraries.version>25.104.0-M6</framework-libraries.version>
-        <framework.version>25.104.0-M1</framework.version>
-        <event-store.version>25.104.0-M1</event-store.version>
+        <framework.version>25.104.0-M3</framework.version>
+        <event-store.version>25.104.0-M4</event-store.version>
         <!--
             jakarta.xml.bind-api is managed by the BOM at 4.0.0 (Jakarta EE 10,
             namespace jakarta.xml.bind.*). The RAML parser (org.raml:raml-parser)
@@ -59,8 +59,6 @@
             javax/xml/bind/SchemaOutputResolver. DO NOT upgrade to 3.x or 4.x.
         -->
         <jakarta.xml.bind-api.raml.version>2.3.2</jakarta.xml.bind-api.raml.version>
-        <!-- liquibase-maven-plugin: 4.24–4.29 have mojo loading failures (LOG_FORMAT removed, AbstractLogger API break); 4.30.0 restores the stable API -->
-        <liquibase.maven.plugin.version>4.30.0</liquibase.maven.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -122,11 +120,6 @@
         </testResources>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.liquibase</groupId>
-                    <artifactId>liquibase-maven-plugin</artifactId>
-                    <version>${liquibase.maven.plugin.version}</version>
-                </plugin>
                 <plugin>
                     <groupId>uk.gov.justice.maven</groupId>
                     <artifactId>raml-maven-plugin</artifactId>

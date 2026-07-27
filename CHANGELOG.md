@@ -5,7 +5,7 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 ## [Unreleased]
 ### Changed
-- Updated `framework.version` to `25.104.0-M3` (brings the relocated `persistence-jpa` module — the event-stream self-healing `EntityManagerFlushInterceptor` and `EntityManagerProducer`), `event-store.version` to `25.104.0-M4`, and parent `maven-framework-parent-pom` to `25.104.0-M7`
+- Consumed the released framework chain: parent `maven-framework-parent-pom` `25.104.0-M8`, `framework.version` (microservice-framework) `25.104.0-M4`, `event-store.version` `25.104.0-M5`, `framework-libraries.version` `25.104.0-M11`, and `file-service.version` `25.104.0-M7`. Brings Jackson `2.21.5` (**CVE-2026-54515**), the `org.junit:junit-bom` import, the relocated `persistence-jpa` module (event-stream self-healing `EntityManagerFlushInterceptor` + `EntityManagerProducer`), and the new event-store `EntityManagerFlushInterceptorPresenceVerifier` deploy-guard
 - `cakeshop-viewstore-persistence` now depends on `persistence-jpa`, delivering the flush interceptor and EntityManager producer into the service WARs
 
 ### Fixed

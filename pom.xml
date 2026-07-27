@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.gov.justice</groupId>
         <artifactId>maven-framework-parent-pom</artifactId>
-        <version>25.104.0-M7</version>
+        <version>25.104.0-M8</version>
     </parent>
 
     <groupId>uk.gov.justice.services</groupId>
@@ -45,10 +45,10 @@
         <pushReleases>true</pushReleases>
         <wildfly.maven.plugin.version>4.2.2.Final</wildfly.maven.plugin.version>
 
-        <file-service.version>25.104.0-M3</file-service.version>
-        <framework-libraries.version>25.104.0-M6</framework-libraries.version>
-        <framework.version>25.104.0-M3</framework.version>
-        <event-store.version>25.104.0-M4</event-store.version>
+        <file-service.version>25.104.0-M7</file-service.version>
+        <framework-libraries.version>25.104.0-M11</framework-libraries.version>
+        <framework.version>25.104.0-M4</framework.version>
+        <event-store.version>25.104.0-M5</event-store.version>
         <!--
             jakarta.xml.bind-api is managed by the BOM at 4.0.0 (Jakarta EE 10,
             namespace jakarta.xml.bind.*). The RAML parser (org.raml:raml-parser)

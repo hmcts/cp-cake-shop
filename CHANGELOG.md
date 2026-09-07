@@ -4,20 +4,25 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [25.104.0] - 2026-09-07
+First official (non-milestone) release of the Java 25 / WildFly 40 / Jakarta EE 11 line,
+consolidating milestone `25.104.0-M1`. As the framework's reference implementation, this
+is the first build to run end to end against the fully released `25.104.0` chain.
+
 ### Changed
-- Consumed the released framework chain: parent `maven-framework-parent-pom` `25.104.0-M8`, `framework.version` (microservice-framework) `25.104.0-M4`, `event-store.version` `25.104.0-M5`, `framework-libraries.version` `25.104.0-M11`, and `file-service.version` `25.104.0-M7`. Brings Jackson `2.21.5` (**CVE-2026-54515**), the `org.junit:junit-bom` import, the relocated `persistence-jpa` module (event-stream self-healing `EntityManagerFlushInterceptor` + `EntityManagerProducer`), and the new event-store `EntityManagerFlushInterceptorPresenceVerifier` deploy-guard
-- `cakeshop-viewstore-persistence` now depends on `persistence-jpa`, delivering the flush interceptor and EntityManager producer into the service WARs
+- Upgraded to Java 25 / WildFly 40 / Jakarta EE 11 (25.104.x release line)
+- Consumed the released framework chain at `25.104.0` throughout: parent `maven-framework-parent-pom`, `framework.version` (microservice-framework), `event-store.version`, `framework-libraries.version` and `file-service.version`. Brings Java 25 / Jakarta EE 11 targeting (`java.major.version=25`, `enforcer.java.version.range=[25,)`), the Jakarta EE 11 API set, Weld 6, RESTEasy 7, Hibernate ORM 6, Apache Artemis `2.54.0` under the new `org.apache.artemis` groupId, `liquibase.version=5.0.3`, Jackson `2.21.5` (**CVE-2026-54515**), the `org.junit:junit-bom` import, the relocated `persistence-jpa` module (event-stream self-healing `EntityManagerFlushInterceptor` + `EntityManagerProducer`), and the event-store `EntityManagerFlushInterceptorPresenceVerifier` deploy-guard
+- `cakeshop-viewstore-persistence` now depends on `persistence-jpa`, delivering the flush interceptor and `EntityManager` producer into the service WARs
+- WildFly upgraded to `40.0.0.Final`; the Docker image uses a multi-stage build on `eclipse-temurin:25-jdk-noble`
+- Azure pipeline agent: `ubuntu-j21` → `ubuntu-j25-postgres`
+
+### Removed
+- Dead `wildfly.maven.plugin.version` (`4.2.2.Final`) property — nothing referenced `${wildfly.maven.plugin.version}`, and the WildFly plugin version comes from `maven-framework-parent-pom` as `plugins.maven.wildfly.version` (`6.0.0.Final`). The stale value was a leftover from the WildFly 32 era
+- Local `jakarta.xml.bind-api.raml.version` property — the value (`2.3.2`) now comes from `maven-framework-parent-pom`, which centralised it so child projects could drop their copies. The explanatory comment stays, since the generator plugin configs below refer to it
 
 ### Fixed
 - `StreamErrorHandlingIT` restored to assert the event-processing constraint violation is caught in-chain by `uk.gov.justice.services.persistence.EntityManagerFlushInterceptor` (Hibernate 6 surfaces `org.hibernate.exception.ConstraintViolationException` directly rather than wrapping it) — re-establishing coverage of the event-stream self-healing error capture that regressed when the flush interceptor was lost
-
-## [25.104.0-M1] - 2026-06-09
-### Changed
-- Updated parent `maven-framework-parent-pom` to `25.104.0-M3`
-- Updated `framework.version` to `25.104.0-M1`, `framework-libraries.version` to `25.104.0-M6`, `event-store.version` to `25.104.0-M1`, `file-service.version` to `25.104.0-M3`
-- Azure pipeline agent: `ubuntu-j21` → `ubuntu-j25-postgres`
-- WildFly upgraded to `40.0.0.Final`; Docker image uses multi-stage build on `eclipse-temurin:25-jdk-noble`
-- Pinned `liquibase-maven-plugin` to `4.30.0` (`4.24`–`4.29` fail with a class init error on `LOG_FORMAT`; `4.30.0` restores the stable API)
 
 ## [21.0.0-M1] - 2026-06-02
 ### Changed

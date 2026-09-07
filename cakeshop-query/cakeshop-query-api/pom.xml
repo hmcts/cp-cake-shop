@@ -3,7 +3,7 @@
     <parent>
         <artifactId>cakeshop-query</artifactId>
         <groupId>uk.gov.justice.services</groupId>
-        <version>25.104.0-M1-SNAPSHOT</version>
+        <version>25.104.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

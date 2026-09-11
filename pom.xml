@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.gov.justice</groupId>
         <artifactId>maven-framework-parent-pom</artifactId>
-        <version>25.104.0</version>
+        <version>25.104.1</version>
     </parent>
 
     <groupId>uk.gov.justice.services</groupId>
@@ -44,10 +44,10 @@
         <jgitflow.maven.developBranchName>main</jgitflow.maven.developBranchName>
         <pushReleases>true</pushReleases>
 
-        <file-service.version>25.104.0</file-service.version>
-        <framework-libraries.version>25.104.0</framework-libraries.version>
-        <framework.version>25.104.0</framework.version>
-        <event-store.version>25.104.0</event-store.version>
+        <file-service.version>25.104.1</file-service.version>
+        <framework-libraries.version>25.104.1</framework-libraries.version>
+        <framework.version>25.104.1</framework.version>
+        <event-store.version>25.104.1</event-store.version>
         <!--
             jakarta.xml.bind-api.raml.version (2.3.2) now comes from
             maven-framework-parent-pom and must NOT be re-pinned here — a local copy

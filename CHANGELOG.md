@@ -4,6 +4,9 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Updated the parent `maven-framework-parent-pom` to 25.104.1 to take the changes from it
+- Updated `cp-file-service`, `framework-libraries`, `microservice-framework` and `event-store` to 25.104.1
 
 ## [25.104.0] - 2026-09-07
 First official (non-milestone) release of the Java 25 / WildFly 40 / Jakarta EE 11 line,

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <!--
+        Cache the remote Features, refreshing them every 2 seconds, so FeatureControlRefreshFailureIT
+        can check that a failed refresh keeps the previously fetched Features (PEG-3655)
+    -->
+    <env-entry>
+        <env-entry-name>java:global/feature-control-cache.enabled</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>true</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>java:global/feature-control-cache-refresh-rate.timer.interval.milliseconds</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>2000</env-entry-value>
+    </env-entry>
+
+</web-app>

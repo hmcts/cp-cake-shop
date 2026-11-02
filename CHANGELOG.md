@@ -5,6 +5,7 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 ## [Unreleased]
 ### Changed
+- Update framework to 17.104.1 and event-store to 17.104.2 ([PEG-3655](https://hmcts.atlassian.net/browse/PEG-3655))
 - Integration tests now run against a standalone wildfly docker instance rather than using the maven-wildfly-plugin
 - Integration tests no longer run as part of the default build.
 - `runIntegrationTests.sh` script now deploys cake-shop into wildfly and runs the integration tests
@@ -24,6 +25,10 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 - Jmx MBean `SystemCommanderMBean` now only takes basic Java Objects to keep the JMX handling interoperable
 
 ### Added
+- [PEG-3655](https://hmcts.atlassian.net/browse/PEG-3655): New integration test `FeatureControlRefreshFailureIT`
+  checking that a failed refresh of the remote Features keeps the previously fetched Features enabled.
+  cake-shop now fetches its remote Features from a WireMock stub (`WireMockFeatureFetcher`, replacing
+  `HardCodedFeatureFetcher`), with the feature cache enabled and refreshed every 2 seconds
 - Implemented error handling for events
 - New tables in viewstore `stream_error` and `stream_error_hash` for storing errors on a stream 
 - New column `buffered_at` on the stream_buffer tables to allow for monitoring of stuck stream_buffer events

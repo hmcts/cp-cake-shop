@@ -40,6 +40,21 @@ runLiquibase() {
   printf "${CYAN}All liquibase $LIQUIBASE_COMMAND scripts run${NO_COLOUR}\n\n"
 }
 
+# cake-shop fetches its remote Features from WireMock (see WireMockFeatureFetcher), so stub the
+# default Features as soon as WireMock is up; FeatureControlRefreshFailureIT changes this stub and restores it
+stubDefaultFeatures() {
+  local default_features_stub='{"request": {"method": "GET", "urlPath": "/cakeshop-feature-store/features"}, "response": {"status": 200, "jsonBody": {"features": [{"featureName": "recipes-have-allergens-specified", "enabled": false}]}}}'
+  for attempt in {1..60}; do
+    if curl -s -f -o /dev/null -X POST -H "Content-Type: application/json" -d "$default_features_stub" http://localhost:8080/__admin/mappings; then
+      printf "${CYAN}Default cake-shop Features stubbed in WireMock${NO_COLOUR}\n"
+      return 0
+    fi
+    sleep 2
+  done
+  echo "WireMock did not start; could not stub the default cake-shop Features"
+  exit 1
+}
+
 buildAndDeploy() {
   loginToDockerContainerRegistry
   buildWars
@@ -48,6 +63,7 @@ buildAndDeploy() {
   runLiquibase
   deployWiremock
   deployWars
+  stubDefaultFeatures
   cakeshopDeploymentCheck
   integrationTests
 }

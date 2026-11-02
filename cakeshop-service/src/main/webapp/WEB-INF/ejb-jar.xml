@@ -6,4 +6,26 @@
 
     <module-name>cakeshop-service</module-name>
 
+    <enterprise-beans>
+        <!--
+            Cache the remote Features, refreshing them every 2 seconds, so FeatureControlRefreshFailureIT
+            can check that a failed refresh keeps the previously fetched Features (PEG-3655).
+            These are java:global names, so they are bound for the whole server, not just this bean.
+            They live here rather than in web.xml because the parent pom leaves WEB-INF/web.xml out of the war.
+        -->
+        <session>
+            <ejb-name>CachingFeatureProviderTimerBean</ejb-name>
+            <env-entry>
+                <env-entry-name>java:global/feature-control-cache.enabled</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>true</env-entry-value>
+            </env-entry>
+            <env-entry>
+                <env-entry-name>java:global/feature-control-cache-refresh-rate.timer.interval.milliseconds</env-entry-name>
+                <env-entry-type>java.lang.String</env-entry-type>
+                <env-entry-value>2000</env-entry-value>
+            </env-entry>
+        </session>
+    </enterprise-beans>
+
 </ejb-jar>

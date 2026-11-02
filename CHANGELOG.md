@@ -5,8 +5,18 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 ## [Unreleased]
 ### Changed
-- Updated the parent `maven-framework-parent-pom` to 25.104.1 to take the changes from it
-- Updated `cp-file-service`, `framework-libraries`, `microservice-framework` and `event-store` to 25.104.1
+- Updated the parent `maven-framework-parent-pom` to 25.104.3 to take the changes from it
+- Updated `cp-file-service` to 25.104.3 and `framework-libraries` to 25.104.5
+- Updated `microservice-framework` and `event-store` to 25.104.6: a failed refresh of the remote Features keeps the
+  previously cached Features and logs an error ([PEG-3655](https://hmcts.atlassian.net/browse/PEG-3655))
+
+### Added
+- [PEG-3655](https://hmcts.atlassian.net/browse/PEG-3655): New integration test `FeatureControlRefreshFailureIT`
+  checking that a failed refresh of the remote Features keeps the previously fetched Features enabled.
+  cake-shop now fetches its remote Features from a WireMock stub (`WireMockFeatureFetcher`, replacing
+  `HardCodedFeatureFetcher`), with the feature cache enabled and refreshed every 2 seconds. The two
+  feature-cache JNDI values are `java:global` env-entries in `cakeshop-service`'s `ejb-jar.xml`, since the
+  parent pom leaves `WEB-INF/web.xml` out of the war
 
 ## [25.104.0] - 2026-09-07
 First official (non-milestone) release of the Java 25 / WildFly 40 / Jakarta EE 11 line,
